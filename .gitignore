@@ -1,0 +1,19 @@
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+.idea
+.vs
+
+# Build results
+EasyDbc/obj/
+EasyDbc/bin/
+EasyDbc.Test/obj/
+EasyDbc.Test/bin/
+EasyDbc.Benchmark/obj/
+EasyDbc.Benchmark/bin/
+EasyDbc.Demo/obj/
+EasyDbc.Demo/bin/
+
+# Misc
+*.ini
