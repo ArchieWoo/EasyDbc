@@ -11,6 +11,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDbc.Benchmark", "EasyDb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDbc.Demo", "EasyDbc.Demo\EasyDbc.Demo.csproj", "{96131094-A71D-46EB-A50C-D4868CDAE650}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{27186C1B-520F-4022-A5A8-F8139154EFC5}"
+	ProjectSection(SolutionItems) = preProject
+		README.de.md = README.de.md
+		README.en.md = README.en.md
+		README.fr.md = README.fr.md
+		README.jp.md = README.jp.md
+		README.kr.md = README.kr.md
+		README.md = README.md
+		README.zh.md = README.zh.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
