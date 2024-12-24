@@ -1,12 +1,12 @@
 # EasyDbc
 
 <p align="right">
-  <a href="./EasyDbc/README.en.md">English</a> |
+  <a href="./README.en.md">English</a> |
   <a >中文</a> |
-  <a href="./EasyDbc/README.de.md">Deutsch</a> |
-  <a href="./EasyDbc/README.kr.md">한국어</a> |
-  <a href="./EasyDbc/README.jp.md">日本語</a> |
-  <a href="./EasyDbc/README.fr.md">Français</a>
+  <a href="./README.de.md">Deutsch</a> |
+  <a href="./README.kr.md">한국어</a> |
+  <a href="./README.jp.md">日本語</a> |
+  <a href="./README.fr.md">Français</a>
 </p>
 
 
@@ -89,7 +89,7 @@
 
 **运行效果截图**：
 
-![DBC 文件解析](./Assets/Overview.jpg)
+![DBC 文件解析](./EasyDbc/Assets/Overview.jpg)
 
 **示例说明**：
 - 输入：选择一个格式良好的 DBC 文件。
