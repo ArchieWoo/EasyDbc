@@ -131,7 +131,7 @@
 
 **샘플 설명 스크린샷**:
 
-![소프트웨어 사용 설명](Assets/DemoDescription.jpg)
+![소프트웨어 사용 설명](./Assets/DemoDescription.jpg)
 
 
 ---
@@ -142,7 +142,7 @@
 
 **실행 효과 스크린샷**:
 
-![DBC 파일 분석](Assets/Overview.jpg)
+![DBC 파일 분석](./Assets/Overview.jpg)
 
 **설명**:
 - 입력: 잘 형성된 DBC 파일을 선택합니다.
@@ -156,7 +156,7 @@ Excel 파일을 DBC 데이터 모델로 변환할 수 있으며, 사용자의 �
 
 **실행 효과 스크린샷**:
 
-![Excel 파일 분석](Assets/ExcelView.jpg)
+![Excel 파일 분석](./Assets/ExcelView.jpg)
 
 **설명**:
 - 기능 특징:
@@ -171,7 +171,7 @@ Excel 파일을 DBC 데이터 모델로 변환할 수 있으며, 사용자의 �
 
 **실행 효과 스크린샷**:
 
-![DBC 파일 병합](Assets/DbcMergeView.jpg)
+![DBC 파일 병합](./Assets/DbcMergeView.jpg)
 
 **설명**:
 - 입력: 병합할 여러 DBC 파일.

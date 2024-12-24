@@ -78,7 +78,7 @@ Hier sind einige Funktionen und Screenshots des Projekts dargestellt.
 
 **Beispielbeschreibung Screenshot**:
 
-![Benutzeranleitung](Assets/DemoDescription.jpg)
+![Benutzeranleitung](./Assets/DemoDescription.jpg)
 
 
 ---
@@ -89,7 +89,7 @@ Analyse von DBC-Dateien durch Angabe eines Pfads und erfolgreiches Laden des Inh
 
 **Beispielbeschreibung Screenshot**:
 
-![DBC-Dateien analysieren](Assets/Overview.jpg)
+![DBC-Dateien analysieren](./Assets/Overview.jpg)
 
 **Erläuterung**:
 - Eingabe: Auswahl einer DBC-Datei im korrekten Format.
@@ -103,7 +103,7 @@ Unterstützt die Analyse von Excel-Dateien zu DBC-Datenmodellen sowie die Erstel
 
 **Beispielbeschreibung Screenshot**:
 
-![Excel-Dateien analysieren](Assets/ExcelView.jpg)
+![Excel-Dateien analysieren](./Assets/ExcelView.jpg)
 
 **Erläuterung**:
 - Hauptmerkmale:
@@ -118,7 +118,7 @@ Zusammenführung mehrerer DBC-Dateien zu einer einzigen Datei unter Berücksicht
 
 **Beispielbeschreibung Screenshot**:
 
-![DBC-Dateien zusammenführen](Assets/DbcMergeView.jpg)
+![DBC-Dateien zusammenführen](./Assets/DbcMergeView.jpg)
 
 **Erläuterung**:
 - Eingabe: Mehrere DBC-Dateien, die zusammengeführt werden sollen.
