@@ -33,7 +33,4 @@
       <_Parameter1>EasyDbc.Benchmark</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Docs\" />
-  </ItemGroup>
 </Project>
