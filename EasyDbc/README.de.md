@@ -1,12 +1,12 @@
 # EasyDbc
 
 <p align="right">
-  <a href="./README.md">English</a> |
+  <a href="./README.en.md">English</a> |
   <a href="./README.zh.md">中文</a> |
   <a >Deutsch</a> |
-  <a href="./README_kr.md">한국어</a> |
-  <a href="./README_jp.md">日本語</a> |
-  <a href="./README_fr.md">Français</a>
+  <a href="./README.kr.md">한국어</a> |
+  <a href="./README.jp.md">日本語</a> |
+  <a href="./README.fr.md">Français</a>
 </p>
 
 
