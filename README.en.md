@@ -9,6 +9,9 @@
   <a href="./README.fr.md">Français</a>
 </p>
 
+[![](https://img.shields.io/nuget/dt/EasyDbc?color=004880&label=downloads&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
+[![](https://img.shields.io/nuget/vpre/EasyDbc?color=%23004880&label=NuGet&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
+[![GitHub](https://img.shields.io/github/license/Vico-wu/EasyDbc?color=%231281c0)](LICENSE)
 
 ## Introduction  
 Brief introduction to the project's features and goals.  
@@ -180,7 +183,7 @@ private bool TryParsingToFile(string path, out Dbc dbc)
 ```
 ---
 
-### 合并DBC功能展示,可以基于自己实际需求来添加
+### Merging DBC Functionality Display: Can Be Customized Based on Actual Needs
 **⚠️ Important Note** 
 
 Currently, the DBC merging feature will prioritize the first added message, invalidating any subsequent duplicate messages.

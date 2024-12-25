@@ -9,6 +9,9 @@
   <a href="./README.fr.md">Français</a>
 </p>
 
+[![](https://img.shields.io/nuget/dt/EasyDbc?color=004880&label=downloads&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
+[![](https://img.shields.io/nuget/vpre/EasyDbc?color=%23004880&label=NuGet&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
+[![GitHub](https://img.shields.io/github/license/Vico-wu/EasyDbc?color=%231281c0)](LICENSE)
 
 ## 소개  
 이 프로젝트는 [`DbcParserLib`](https://github.com/EFeru/DbcParser)를 기반으로 개발되었으며, 그 위에 다음과 같은 기능을 확장했습니다:

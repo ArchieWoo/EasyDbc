@@ -9,6 +9,9 @@
   <a href="./README.fr.md">Français</a>
 </p>
 
+[![](https://img.shields.io/nuget/dt/EasyDbc?color=004880&label=downloads&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
+[![](https://img.shields.io/nuget/vpre/EasyDbc?color=%23004880&label=NuGet&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
+[![GitHub](https://img.shields.io/github/license/Vico-wu/EasyDbc?color=%231281c0)](LICENSE)
 
 ## Einführung  
 Kurze Einführung in die Funktionen und Ziele des Projekts.  

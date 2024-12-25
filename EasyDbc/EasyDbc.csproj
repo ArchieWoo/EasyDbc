@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net462;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net462;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -10,16 +10,20 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <OutputType>Library</OutputType>
     <Version>1.0.0</Version>
-    <Description>
-      EasyDbc is a versatile tool for managing DBC files. It allows you to:
-
-      Quickly generate DBC files
-      Merge multiple DBC files
-      Parse and analyze DBC files
-      Convert Excel files to DBC format
-      Generate Excel files from DBC files
-      EasyDbc simplifies DBC file workflows, enhancing productivity for automotive communication protocols.
-    </Description>
+	<PackageId>EasyDbc</PackageId>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>DBC Generation. 
+DBC File Parsing. 
+DBC Files Merge. 
+DBC export to excel. 
+Excel export to DBC.</Description>
+	  <RepositoryUrl>https://github.com/Vico-wu/EasyDbc</RepositoryUrl>
+	  <Title>EasyDbc</Title>
+	  <Copyright>© 2024 Wu Qi. Licensed under the MIT License. See LICENSE file for details.</Copyright>
+	  <PackageProjectUrl>https://github.com/Vico-wu/EasyDbc</PackageProjectUrl>
+	  <PackageIcon></PackageIcon>
+	  <PackageReadmeFile>README.en.md</PackageReadmeFile>
+	  <PackageTags>V1.0.0</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,5 +36,17 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>EasyDbc.Benchmark</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.en.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\EASYDBC.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>
