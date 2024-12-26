@@ -81,7 +81,7 @@
 
 **使用説明のサンプルスクリーンショット**：
 
-![使用説明](./EasyDbc/Assets/DemoDescription.jpg)
+![使用説明](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/.jpg)
 
 
 ---
@@ -91,7 +91,7 @@
 指定されたパスからDBCファイルを解析し、内容を正常にロードします。
 
 **実行効果のスクリーンショット**：
-![ DBCファイル解析](./EasyDbc/Assets/Overview.jpg)
+![ DBCファイル解析](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/Overview.jpg)
 
 **サンプル説明**：
 - 入力：適切な形式のDBCファイルを選択。
@@ -105,7 +105,7 @@ ExcelファイルをDBCデータモデルに解析し、ユーザーのニーズ
 
 **実行効果のスクリーンショット**：
 
-![Excelファイルの解析](./EasyDbc/Assets/ExcelView.jpg)
+![Excelファイルの解析](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/ExcelView.jpg)
 
 **サンプル説明**：
 - 機能の特徴：
@@ -120,7 +120,7 @@ ExcelファイルをDBCデータモデルに解析し、ユーザーのニーズ
 
 **実行効果のスクリーンショット**：
 
-![DBCファイルの結合](./EasyDbc/Assets/DbcMergeView.jpg)
+![DBCファイルの結合](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DbcMergeView.jpg)
 
 **サンプル説明**：
 - 入力：結合対象の複数のDBCファイル。

@@ -79,7 +79,7 @@ Répertoire racine du projet/
 Voici quelques démonstrations des fonctionnalités et des résultats d'exécution du projet.
 
 **Capture d'écran des explications d'exemples**:
-![Explications du logiciel](./EasyDbc/Assets/DemoDescription.jpg)
+![Explications du logiciel](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DemoDescription.jpg)
 
 
 ---
@@ -89,7 +89,7 @@ Voici quelques démonstrations des fonctionnalités et des résultats d'exécuti
 Analysez les fichiers DBC en spécifiant leur chemin, et chargez leur contenu avec succès.
 
 **Capture d'écran des résultats d'exécution**:
-![Analyse de fichiers DBC](./EasyDbc/Assets/Overview.jpg)
+![Analyse de fichiers DBC](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/Overview.jpg)
 
 **Description de l'exemple**:
 - Entrée : Sélectionnez un fichier DBC au format valide.
@@ -102,7 +102,7 @@ Analysez les fichiers DBC en spécifiant leur chemin, et chargez leur contenu av
 Prend en charge l'analyse des fichiers Excel en modèle de données DBC, et la génération de fichiers Excel selon les besoins de l'utilisateur.
 
 **Capture d'écran des résultats d'exécution**:
-![Analyse et génération de fichiers Excel](./EasyDbc/Assets/ExcelView.jpg)
+![Analyse et génération de fichiers Excel](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/ExcelView.jpg)
 
 **Description de l'exemple**:
 - Points forts de la fonctionnalité:
@@ -116,7 +116,7 @@ Prend en charge l'analyse des fichiers Excel en modèle de données DBC, et la g
 Fusionne plusieurs fichiers DBC en un seul, en résolvant les conflits et signaux en double.
 
 **Capture d'écran des résultats d'exécution**:
-![Fusion de fichiers DBC](./EasyDbc/Assets/DbcMergeView.jpg)
+![Fusion de fichiers DBC](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DbcMergeView.jpg)
 
 **Description de l'exemple**:
 - Entrée : Plusieurs fichiers DBC à fusionner.

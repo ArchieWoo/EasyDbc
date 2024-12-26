@@ -81,7 +81,7 @@
 
 **样例说明截图**：
 
-![软件使用说明](./EasyDbc/Assets/DemoDescription.jpg)
+![软件使用说明](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DemoDescription.jpg)
 
 
 ---
@@ -92,7 +92,7 @@
 
 **运行效果截图**：
 
-![DBC 文件解析](./EasyDbc/Assets/Overview.jpg)
+![DBC 文件解析](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/Overview.jpg)
 
 **示例说明**：
 - 输入：选择一个格式良好的 DBC 文件。
@@ -106,7 +106,7 @@
 
 **运行效果截图**：
 
-![Excel 文件解析](./EasyDbc/Assets/ExcelView.jpg)
+![Excel 文件解析](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/ExcelView.jpg)
 
 **示例说明**：
 - 功能亮点：
@@ -121,7 +121,7 @@
 
 **运行效果截图**：
 
-![DBC 文件合并](./EasyDbc/Assets/DbcMergeView.jpg)
+![DBC 文件合并](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DbcMergeView.jpg)
 
 **示例说明**：
 - 输入：多个待合并的 DBC 文件。

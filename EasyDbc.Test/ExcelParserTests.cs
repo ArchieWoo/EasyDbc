@@ -18,6 +18,17 @@ namespace EasyDbc.Test
             Assert.That(File.Exists(outputFilePath), Is.True);
         }
         [Test]
+        public void ModifiedExcelParserTest()
+        {
+            string path = @"..\..\..\..\DbcFiles\GeneratedCanProtocol.xlsx";
+            ExcelParser excelParser = new ExcelParser();
+            excelParser.ParseFirstSheetFromPath(path, out Dbc dbcOutput);
+            var outputFilePath = @"..\..\..\..\DbcFiles\GeneratedCanProtocol.dbc";
+            DbcGenerator.WriteToFile(dbcOutput, outputFilePath);
+            Assert.That(dbcOutput, Is.Not.Null);
+            Assert.That(File.Exists(outputFilePath), Is.True);
+        }
+        [Test]
         public void ExcelColumnNameParserTest()
         {
             ExcelParser excelParser = new ExcelParser();

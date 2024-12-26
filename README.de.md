@@ -81,7 +81,7 @@ Hier sind einige Funktionen und Screenshots des Projekts dargestellt.
 
 **Beispielbeschreibung Screenshot**:
 
-![Benutzeranleitung](./EasyDbc/Assets/DemoDescription.jpg)
+![Benutzeranleitung](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DemoDescription.jpg)
 
 
 ---
@@ -92,7 +92,7 @@ Analyse von DBC-Dateien durch Angabe eines Pfads und erfolgreiches Laden des Inh
 
 **Beispielbeschreibung Screenshot**:
 
-![DBC-Dateien analysieren](./EasyDbc/Assets/Overview.jpg)
+![DBC-Dateien analysieren](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/Overview.jpg)
 
 **Erläuterung**:
 - Eingabe: Auswahl einer DBC-Datei im korrekten Format.
@@ -106,7 +106,7 @@ Unterstützt die Analyse von Excel-Dateien zu DBC-Datenmodellen sowie die Erstel
 
 **Beispielbeschreibung Screenshot**:
 
-![Excel-Dateien analysieren](./EasyDbc/Assets/ExcelView.jpg)
+![Excel-Dateien analysieren](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/ExcelView.jpg)
 
 **Erläuterung**:
 - Hauptmerkmale:
@@ -121,7 +121,7 @@ Zusammenführung mehrerer DBC-Dateien zu einer einzigen Datei unter Berücksicht
 
 **Beispielbeschreibung Screenshot**:
 
-![DBC-Dateien zusammenführen](./EasyDbc/Assets/DbcMergeView.jpg)
+![DBC-Dateien zusammenführen](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DbcMergeView.jpg)
 
 **Erläuterung**:
 - Eingabe: Mehrere DBC-Dateien, die zusammengeführt werden sollen.

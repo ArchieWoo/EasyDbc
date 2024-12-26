@@ -81,7 +81,7 @@ Here are some screenshots demonstrating the features and results of the project.
 
 **Example Description Screenshot:**
 
-![SoftwareDescription](./EasyDbc/Assets/DemoDescription.jpg)
+![SoftwareDescription](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DemoDescription.jpg)
 
 
 ---
@@ -92,7 +92,7 @@ Parse the DBC file by specifying the path and successfully load its contents.
 
 **Run Screenshot:**
 
-![DBC Parsing](./EasyDbc/Assets/Overview.jpg)
+![DBC Parsing](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/Overview.jpg)
 
 **Example Explanation:**
 - Input: Select a well-formed DBC file.
@@ -106,7 +106,7 @@ Supports parsing Excel files to DBC data models, and also generating Excel files
 
 **Run Screenshot:**
 
-![Excel Parsing](./EasyDbc/Assets/ExcelView.jpg)
+![Excel Parsing](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/ExcelView.jpg)
 
 **Example Explanation:**
 - Feature Highlights:
@@ -121,7 +121,7 @@ Merges multiple DBC files into one, resolving duplicate signals and conflicts.ã€
 
 **Run Screenshot:**
 
-![DBC Merge](./EasyDbc/Assets/DbcMergeView.jpg)
+![DBC Merge](https://raw.githubusercontent.com/Vico-wu/EasyDbc/master/EasyDbc/Assets/DbcMergeView.jpg)
 
 **Example Explanation:**
 - Input: Multiple DBC files to merge.

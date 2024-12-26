@@ -339,10 +339,12 @@ namespace EasyDbc.Parsers
                     if (extension.Equals(".xls"))
                     {
                         workbook = new HSSFWorkbook(file);
+                        return ExcelParserState.Success;
                     }
                     else if (extension.Equals(".xlsx"))
                     {
                         workbook = new XSSFWorkbook(file);
+                        return ExcelParserState.Success;
                     }
                     else
                     {
@@ -712,6 +714,11 @@ namespace EasyDbc.Parsers
         }
         private bool parsing_MessageCycleTime(string orignalString, out uint cycleTime)
         {
+            if(string.IsNullOrEmpty(orignalString))
+            {
+                cycleTime = 0;
+                return false;
+            }
             if (orignalString.Trim().StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
                 return uint.TryParse(orignalString.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out cycleTime);
@@ -740,7 +747,7 @@ namespace EasyDbc.Parsers
             {
                 for (int i = _nodeStartIndex; i < table_column_count; i++)
                 {
-                    if (string.Equals(table[row, i].Trim(), "R", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(table[row, i]?.Trim(), "R", StringComparison.OrdinalIgnoreCase))
                     {
                         if (columnMapping.TryGetValue(table[0, i], out ExcelColumnConfigModel model))
                         {
