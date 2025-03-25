@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net462;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net462;netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -9,7 +9,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <OutputType>Library</OutputType>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
 	<PackageId>EasyDbc</PackageId>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>DBC Generation. 
@@ -22,12 +22,12 @@ Excel export to DBC.</Description>
 	  <Copyright>© 2024 Wu Qi. Licensed under the MIT License. See LICENSE file for details.</Copyright>
 	  <PackageProjectUrl>https://github.com/Vico-wu/EasyDbc</PackageProjectUrl>
 	  <PackageIcon></PackageIcon>
-	  <PackageReadmeFile>README.en.md</PackageReadmeFile>
-	  <PackageTags>V1.0.1</PackageTags>
+	  <PackageReadmeFile>README.zh.md</PackageReadmeFile>
+	  <PackageTags>V1.0.2</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.7.2" />
+    <PackageReference Include="NPOI" Version="2.7.3" />
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
@@ -38,7 +38,7 @@ Excel export to DBC.</Description>
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\README.en.md">
+    <None Include="..\README.zh.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

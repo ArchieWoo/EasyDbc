@@ -334,7 +334,7 @@ namespace EasyDbc.Parsers
             string extension = Path.GetExtension(path);
             try
             {
-                using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
+                using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     if (extension.Equals(".xls"))
                     {
@@ -393,7 +393,66 @@ namespace EasyDbc.Parsers
                     }
                 }
             }
+            FilterEmptyRows(ref table);
             return ExcelParserState.Success;
+        }
+
+        private void FilterEmptyRows(ref string[,] table)
+        {
+            if (table == null || table.GetLength(0) == 0 || table.GetLength(1) == 0)
+            {
+
+                return;
+            }
+
+            int rowCount = table.GetLength(0);
+            int colCount = table.GetLength(1);
+
+
+            var validRows = new List<string[]>();
+
+            for (int row = 0; row < rowCount; row++)
+            {
+                bool isValidRow = false;
+                var rowData = new string[colCount];
+
+                for (int col = 0; col < colCount; col++)
+                {
+                    string cellValue = table[row, col] ?? string.Empty;
+
+                    rowData[col] = cellValue;
+
+
+                    if (!string.IsNullOrWhiteSpace(cellValue))
+                    {
+                        isValidRow = true;
+                    }
+                }
+
+                if (isValidRow)
+                {
+                    validRows.Add(rowData);
+                }
+            }
+
+            if (validRows.Count == 0)
+            {
+                table = new string[0, 0];
+                return;
+            }
+
+            int newRowCount = validRows.Count;
+            var filteredTable = new string[newRowCount, colCount];
+
+            for (int i = 0; i < newRowCount; i++)
+            {
+                for (int j = 0; j < colCount; j++)
+                {
+                    filteredTable[i, j] = validRows[i][j];
+                }
+            }
+
+            table = filteredTable;
         }
         private void initSheetTable(ISheet sheet)
         {
