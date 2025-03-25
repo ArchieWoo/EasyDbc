@@ -46,6 +46,12 @@
         ReadNullError,
         UnknownError
     }
+    public enum DbcOrderBy
+    {
+        Name,
+        Id,
+        Transmitter,
+    }
     public enum UpdateColumnConfigState
     {
         Success,

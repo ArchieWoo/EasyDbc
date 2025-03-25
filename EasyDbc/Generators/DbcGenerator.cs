@@ -58,24 +58,32 @@ namespace EasyDbc.Generators
                 if (dbcOutput?.Messages?.Count() > 0)
                 {
                     retVal = true;
-                }                 
+                }
             }
             return retVal;
         }
         public static void WriteToFile(Dbc dbc, string filePath)
         {
-            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            if (dbc != null)
             {
-                WriteToStream(dbc, fileStream);
+                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    WriteToStream(dbc, fileStream);
+                }
             }
+
         }
 
         public static void WriteToStream(Dbc dbc, Stream stream)
         {
-            using (var writer = new StreamWriter(stream))
+            if (dbc != null)
             {
-                WriteToWriter(dbc, writer);
+                using (var writer = new StreamWriter(stream))
+                {
+                    WriteToWriter(dbc, writer);
+                }
             }
+
         }
 
         public static void WriteToWriter(Dbc dbc, TextWriter writer)
@@ -279,8 +287,9 @@ namespace EasyDbc.Generators
 
         private static void WriteNewSymbols(Dbc dbc, TextWriter writer)
         {
+
             string[] NewSymbols =
-            {
+{
                 "NS_DESC_",
                 "CM_",
                 "BA_DEF_",
@@ -316,18 +325,24 @@ namespace EasyDbc.Generators
                 writer.WriteLine($"    {symbol}");
             }
             writer.WriteLine("");
+
         }
 
         private static void WriteBitTiming(Dbc dbc, TextWriter writer)
         {
+
             writer.WriteLine($"BS_ : ");
             writer.WriteLine("");
+
         }
 
         private static void WriteNodes(Dbc dbc, TextWriter writer)
         {
-            writer.WriteLine($"BU_: {string.Join(" ", dbc.Nodes.Select(node => node.Name))}");
-            writer.WriteLine("");
+            if (dbc != null)
+            {
+                writer.WriteLine($"BU_: {string.Join(" ", dbc.Nodes.Select(node => node.Name))}");
+                writer.WriteLine("");
+            }
         }
 
         private static void WriteMessages(Dbc dbc, TextWriter writer)

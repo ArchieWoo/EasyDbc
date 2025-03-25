@@ -436,7 +436,7 @@ namespace EasyDbc.Generators
             }
         }
 
-        public Dbc Build()
+        public Dbc Build(DbcOrderBy dbcSort = DbcOrderBy.Name)
         {
             FillNodesNotSetCustomPropertyWithDefault();
             FillMessagesNotSetCustomPropertyWithDefault();
@@ -450,28 +450,33 @@ namespace EasyDbc.Generators
                     message.Value.Signals.AddRange(signals.Values.OrderBy(signal => signal.StartBit));
                 message.Value.AdjustExtendedId();
             }
-
-            //TODO: uncomment once Immutable classes are used
-            //var nodes = new List<ImmutableNode>();
-            //foreach (var node in m_nodes)
-            //{
-            //    nodes.Add(node.CreateNode());
-            //}
-
-            //var messages = new List<ImmutableMessage>();
-            //foreach (var message in m_messages.Values)
-            //{
-            //    messages.Add(message.CreateMessage());
-            //}
-
-            //var environmentVariables = new List<ImmutableEnvironmentVariable>();
-            //foreach (var environmentVariable in m_environmentVariables.Values)
-            //{
-            //    environmentVariables.Add(environmentVariable.CreateEnvironmentVariable());
-            //}
-            //return new Dbc(nodes, messages, environmentVariables);
-
-            return new Dbc(m_nodes.OrderBy(node => node.Name).ToArray(), m_messages.Values.OrderBy(message => message.Name).ToArray(), m_environmentVariables.Values.ToArray(), m_globalCustomProperties.Values);
+            switch(dbcSort)
+            {
+                case  DbcOrderBy.Name:
+                    return new Dbc(
+                                    m_nodes.OrderBy(node => node.Name).ToArray(),
+                                    m_messages.Values.OrderBy(message => message.Name).ToArray(),
+                                    m_environmentVariables.Values.ToArray(),
+                                    m_globalCustomProperties.Values);
+                case DbcOrderBy.Id:
+                    return new Dbc(
+                                    m_nodes.OrderBy(node => node.Name).ToArray(),
+                                    m_messages.Values.OrderBy(message => message.ID).ToArray(),
+                                    m_environmentVariables.Values.ToArray(),
+                                    m_globalCustomProperties.Values);
+                case DbcOrderBy.Transmitter:
+                    return new Dbc(
+                                    m_nodes.OrderBy(node => node.Name).ToArray(),
+                                    m_messages.Values.OrderBy(message => message.Transmitter).ToArray(),
+                                    m_environmentVariables.Values.ToArray(),
+                                    m_globalCustomProperties.Values);
+                default:
+                    return new Dbc(
+                                    m_nodes.OrderBy(node => node.Name).ToArray(),
+                                    m_messages.Values.OrderBy(message => message.Name).ToArray(),
+                                    m_environmentVariables.Values.ToArray(),
+                                    m_globalCustomProperties.Values);
+            }
         }
     }
 

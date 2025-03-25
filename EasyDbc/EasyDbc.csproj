@@ -9,7 +9,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <OutputType>Library</OutputType>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
 	<PackageId>EasyDbc</PackageId>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>DBC Generation. 
@@ -23,7 +23,7 @@ Excel export to DBC.</Description>
 	  <PackageProjectUrl>https://github.com/Vico-wu/EasyDbc</PackageProjectUrl>
 	  <PackageIcon></PackageIcon>
 	  <PackageReadmeFile>README.zh.md</PackageReadmeFile>
-	  <PackageTags>V1.0.2</PackageTags>
+	  <PackageTags>V1.0.3</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

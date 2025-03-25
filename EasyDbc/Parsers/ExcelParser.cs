@@ -195,7 +195,7 @@ namespace EasyDbc.Parsers
                 }
             }
         }
-        public ExcelParserState ParseFirstSheetFromPath(string path, out Dbc dbc)
+        public ExcelParserState ParseFirstSheetFromPath(string path, out Dbc dbc, DbcOrderBy dbcOrderBy = DbcOrderBy.Name)
         {
             dbc = null;
             string extension = Path.GetExtension(path);
@@ -218,7 +218,7 @@ namespace EasyDbc.Parsers
                 //Paser to Dbc file
                 ParseNodesFromTable();
                 ParseMessageFromTable();
-                dbc = _dbcBuilder.Build();
+                dbc = _dbcBuilder.Build(dbcOrderBy);
                 // 假设解析成功，返回Success状态
                 return ExcelParserState.Success;
             }
@@ -239,7 +239,7 @@ namespace EasyDbc.Parsers
                 return ExcelParserState.UnknownError;
             }
         }
-        public ExcelParserState ParseSheetNameFromPath(string path, string sheetName, out Dbc dbc)
+        public ExcelParserState ParseSheetNameFromPath(string path, string sheetName, out Dbc dbc, DbcOrderBy dbcOrderBy = DbcOrderBy.Name)
         {
             dbc = null;
             string extension = Path.GetExtension(path);
@@ -262,7 +262,7 @@ namespace EasyDbc.Parsers
                 //Paser to Dbc file
                 ParseNodesFromTable();
                 ParseMessageFromTable();
-                dbc = _dbcBuilder.Build();
+                dbc = _dbcBuilder.Build(dbcOrderBy);
 
                 // 假设解析成功，返回Success状态
                 return ExcelParserState.Success;
@@ -284,7 +284,7 @@ namespace EasyDbc.Parsers
                 return ExcelParserState.UnknownError;
             }
         }
-        public ExcelParserState ParseSheetIndexFromPath(string path, int sheetIndex, out Dbc dbc)
+        public ExcelParserState ParseSheetIndexFromPath(string path, int sheetIndex, out Dbc dbc, DbcOrderBy dbcOrderBy = DbcOrderBy.Name)
         {
             dbc = null;
             string extension = Path.GetExtension(path);
@@ -307,7 +307,7 @@ namespace EasyDbc.Parsers
                 //Paser to Dbc file
                 ParseNodesFromTable();
                 ParseMessageFromTable();
-                dbc = _dbcBuilder.Build();
+                dbc = _dbcBuilder.Build(dbcOrderBy);
                 // 假设解析成功，返回Success状态
                 return ExcelParserState.Success;
             }
@@ -611,7 +611,7 @@ namespace EasyDbc.Parsers
                 valueTableMap = tempValueTableMap;
                 return false;
             }
-            var entries = valueTableString.Trim().Replace(",", ":").Replace("：", ":").Replace("，", ":").Split(new[] { "\r\n", "\r","\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var entries = valueTableString.Trim().Replace(",", ":").Replace("：", ":").Replace("，", ":").Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var entry in entries)
             {
                 var parts = entry.Split(new[] { ':' }, 2);
@@ -773,7 +773,7 @@ namespace EasyDbc.Parsers
         }
         private bool parsing_MessageCycleTime(string orignalString, out uint cycleTime)
         {
-            if(string.IsNullOrEmpty(orignalString))
+            if (string.IsNullOrEmpty(orignalString))
             {
                 cycleTime = 0;
                 return false;

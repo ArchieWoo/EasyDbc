@@ -4,9 +4,9 @@ namespace EasyDbc.Contracts
 {
     public interface IExcelParser
     {
-        ExcelParserState ParseFirstSheetFromPath(string path, out Dbc dbc);
-        ExcelParserState ParseSheetNameFromPath(string path, string sheetName, out Dbc dbc);
-        ExcelParserState ParseSheetIndexFromPath(string path, int sheetIndex, out Dbc dbc);
+        ExcelParserState ParseFirstSheetFromPath(string path, out Dbc dbc, DbcOrderBy dbcOrderBy);
+        ExcelParserState ParseSheetNameFromPath(string path, string sheetName, out Dbc dbc, DbcOrderBy dbcOrderBy);
+        ExcelParserState ParseSheetIndexFromPath(string path, int sheetIndex, out Dbc dbc, DbcOrderBy dbcOrderBy);
 
         UpdateColumnConfigState UpdateColumnConfigWithIndex(DictionaryColumnKey columnKey, int columnIndex);
         UpdateColumnConfigState UpdateColumnConfigWithIndex(string columnKey, int columnIndex);
