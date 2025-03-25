@@ -394,6 +394,7 @@ namespace EasyDbc.Parsers
                 }
             }
             FilterEmptyRows(ref table);
+            
             return ExcelParserState.Success;
         }
 
@@ -450,9 +451,9 @@ namespace EasyDbc.Parsers
                 {
                     filteredTable[i, j] = validRows[i][j];
                 }
-            }
-
+            }        
             table = filteredTable;
+            table_row_count = table.GetLength(0);
         }
         private void initSheetTable(ISheet sheet)
         {
