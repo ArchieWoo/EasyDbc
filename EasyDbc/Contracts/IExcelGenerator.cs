@@ -5,7 +5,7 @@ namespace EasyDbc.Contracts
 
     public interface IExcelGenerator
     {
-        WriteStatus WriteToFile(Dbc dbc, string path, string sheeName = "Matrix");
+        WriteStatus WriteToFile(Dbc dbc, string path, string sheeName = "Matrix", DbcOrderBy dbcOrderBy = DbcOrderBy.Name);
 
         UpdateColumnConfigState UpdateColumnConfig(DictionaryColumnKey columnKey, bool? isVisible = null, int? columnIndex = null, string header = null, double columnWidth = 0);
         UpdateColumnConfigState UpdateColumnConfig(string columnKey, bool? isVisible = null, int? columnIndex = null, string header = null, double columnWidth = 0);

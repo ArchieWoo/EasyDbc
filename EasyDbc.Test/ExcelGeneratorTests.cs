@@ -17,6 +17,36 @@ namespace EasyDbc.Test
             Assert.That(File.Exists(outputPath), Is.True);
         }
         [Test]
+        public void WriteToExcelByIdSordTest()
+        {
+            string path = @"..\..\..\..\DbcFiles\tesla_can.dbc";
+            string outputPath = @"..\..\..\..\DbcFiles\tesla_IdSorted_can.xls";
+            var dbc = Parser.ParseFromPath(path);
+            ExcelGenerator excelGenerator = new ExcelGenerator();
+            excelGenerator.WriteToFile(dbc, outputPath,"Matrix",DbcOrderBy.Id);
+            Assert.That(File.Exists(outputPath), Is.True);
+        }
+        [Test]
+        public void WriteToExcelByTransmitterSordTest()
+        {
+            string path = @"..\..\..\..\DbcFiles\tesla_can.dbc";
+            string outputPath = @"..\..\..\..\DbcFiles\tesla_TransmitterSorted_can.xls";
+            var dbc = Parser.ParseFromPath(path);
+            ExcelGenerator excelGenerator = new ExcelGenerator();
+            excelGenerator.WriteToFile(dbc, outputPath, "Matrix", DbcOrderBy.Transmitter);
+            Assert.That(File.Exists(outputPath), Is.True);
+        }
+        [Test]
+        public void WriteToExcelByNameSordTest()
+        {
+            string path = @"..\..\..\..\DbcFiles\tesla_can.dbc";
+            string outputPath = @"..\..\..\..\DbcFiles\tesla_NameSorted_can.xls";
+            var dbc = Parser.ParseFromPath(path);
+            ExcelGenerator excelGenerator = new ExcelGenerator();
+            excelGenerator.WriteToFile(dbc, outputPath, "Matrix", DbcOrderBy.Name);
+            Assert.That(File.Exists(outputPath), Is.True);
+        }
+        [Test]
         public void SimpleWriteToExcelXlsxTest()
         {
             string path = @"..\..\..\..\DbcFiles\tesla_can.dbc";
@@ -43,5 +73,7 @@ namespace EasyDbc.Test
             excelGenerator.UpdateColumnConfig(DictionaryColumnKey.MessageName, 1);
             Assert.That(excelGenerator.CheckColumnIndexConfiction(out List<int> confictionIndexList), Is.True);
         }
+
+
     }
 }

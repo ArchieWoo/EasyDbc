@@ -218,7 +218,7 @@ namespace EasyDbc.Generators
         }
 
 
-        public WriteStatus WriteToFile(Dbc dbc, string path, string sheeName = "Matrix")
+        public WriteStatus WriteToFile(Dbc dbc, string path, string sheeName = "Matrix", DbcOrderBy dbcOrderBy= DbcOrderBy.Name)
         {
             try
             {
@@ -226,13 +226,13 @@ namespace EasyDbc.Generators
                 {
                     return WriteStatus.FormatError;
                 }
-
+                Dbc sortedDbc = SortedDbc(dbc, dbcOrderBy);
                 _path = path;
-                table_row_count = calculateExcelRowsCount(dbc);
-                table_column_count = calculateExcelColumnCount(dbc);
+                table_row_count = calculateExcelRowsCount(sortedDbc);
+                table_column_count = calculateExcelColumnCount(sortedDbc);
                 table = new string[table_row_count, table_column_count];
                 writeColumnHeader();
-                writeMessages(dbc);
+                writeMessages(sortedDbc);
                 // Write the table to the Excel file
                 WriteTableToExcel(sheeName);
                 // Add Data Validation
@@ -256,6 +256,40 @@ namespace EasyDbc.Generators
             {
                 return WriteStatus.UnknownError;
             }
+        }
+        private Dbc SortedDbc(Dbc dbc, DbcOrderBy dbcOrderBy)
+        {
+            // Step 1: Sort Messages based on the specified criterion
+            IEnumerable<Message> sortedMessages;
+            switch (dbcOrderBy)
+            {
+                case DbcOrderBy.Name:
+                    sortedMessages = dbc.Messages.OrderBy(item => item.Name).ToList();
+                    break;
+                case DbcOrderBy.Id:
+                    sortedMessages = dbc.Messages.OrderBy(item => item.ID).ToList();
+                    break;
+                case DbcOrderBy.Transmitter:
+                    sortedMessages = dbc.Messages.OrderBy(item => item.Transmitter).ToList();
+                    break;
+                default:
+                    sortedMessages = dbc.Messages.OrderBy(item => item.Name).ToList();
+                    break;
+            }
+
+            // Step 2: Sort Signals within each Message by StartBit
+            foreach (var message in sortedMessages)
+            {
+                message.Signals = message.Signals.OrderBy(signal => signal.StartBit).ToList();
+            }
+
+            // Step 3: Return a new DBC object with sorted data
+            return new Dbc(
+                dbc.Nodes.OrderBy(node => node.Name),   // Sort Nodes by Name
+                sortedMessages,                         // Use sorted Messages
+                dbc.EnvironmentVariables,               // Sort EnvironmentVariables by Name
+                dbc.GlobalProperties                    // GlobalProperties remain unchanged
+            );
         }
         private void SetExcelDataValidation()
         {
