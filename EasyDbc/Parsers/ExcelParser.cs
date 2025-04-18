@@ -541,7 +541,7 @@ namespace EasyDbc.Parsers
                     messageParsingResult |= parsing_MessageCycleTime(table[row, columnMapping[DictionaryColumnKey.CycleTime.ToString()].ColumnIndex], out uint messageCycleTime);
                     var message = new Message
                     {
-                        Name = table[row, columnMapping[DictionaryColumnKey.MessageName.ToString()].ColumnIndex],
+                        Name = table[row, columnMapping[DictionaryColumnKey.MessageName.ToString()].ColumnIndex].Trim().Replace(" ",""),
                         ID = id,
                         Transmitter = transmitter,
                         Comment = table[row, columnMapping[DictionaryColumnKey.Description.ToString()].ColumnIndex],
@@ -636,7 +636,7 @@ namespace EasyDbc.Parsers
             {
                 return false;
             }
-            name = orignalString.Trim();
+            name = orignalString.Trim().Replace(" ","");
             return true;
         }
         private bool parsing_Description(string orignalString, out string description)

@@ -6,6 +6,9 @@ namespace EasyDbc.Parsers.DbcLineParsers
 {
     internal class CommentLineParser : ILineParser
     {
+        //Comments end of line must contain both " and ; chars to allow semicolon inside comment string
+        private static readonly string CheckEndLineComment = @"""\s*;";
+
         private const string CharGroup = "CharString";
         private const string NodeNameGroup = "NodeName";
         private const string MessageIdGroup = "MessageId";
