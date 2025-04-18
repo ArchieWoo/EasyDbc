@@ -1,0 +1,500 @@
+VERSION ""
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_SGTYPE_
+    BA_SGTYPE_
+    SIG_TYPE_REF_
+    VAL_TABLE_
+    SIG_GROUP_
+    SIG_VALTYPE_
+    SIGTYPE_VALTYPE_
+    BO_TX_BU_
+    BA_DEF_REL_
+    BA_REL_
+    BA_DEF_DEF_REL_
+    BU_SG_REL_
+    BU_EV_REL_
+    BU_BO_REL_
+    SG_MUL_VAL_
+
+BS_ : 
+
+BU_: Cluster EPS_DCDC PumpMCU1 PumpMCU2 RC TractionMCU1 TractionMCU2
+
+BO_ 2364609095 DCDC1C: 8 RC
+ SG_ DcDc1OperationalCommand : 0|4@1+ (1,0) [0|15] "" EPS_DCDC
+ SG_ DcDc1ControlCounter : 4|4@1+ (1,0) [0|15] "" EPS_DCDC
+ SG_ DcDc1LowSideVoltageBuckSetpoint : 8|16@1+ (0.01,0) [0|642.55] "V" EPS_DCDC
+ SG_ DD1HghSdVltgBstStpnt : 24|16@1+ (0.05,0) [0|3212.75] "V" EPS_DCDC
+ SG_ DD1LwSdVltgBkDfltStpnt : 40|16@1+ (0.01,0) [0|642.55] "V" EPS_DCDC
+ SG_ DcDc1ControlCrc : 56|8@1+ (1,0) [0|250] "count" EPS_DCDC
+
+BO_ 2365315399 DCDC1LL: 8 RC
+ SG_ DD1LwSdVltgMnmmLmtRqst : 0|16@1+ (0.01,0) [0|642.55] "V" EPS_DCDC
+ SG_ DD1LwSdVltgMxmmLmtRqst : 16|16@1+ (0.01,0) [0|642.55] "V" EPS_DCDC
+ SG_ DD1LwSdCrrntMxmmLmtRqst : 32|16@1+ (0.05,0) [0|3212.75] "A" EPS_DCDC
+
+BO_ 2364609425 DCDC1OS: 8 EPS_DCDC
+ SG_ DcDc1OperationalStatus : 0|4@1+ (1,0) [0|15] "" RC
+ SG_ DcDc1HvilStatus : 4|2@1+ (1,0) [0|3] "" RC
+ SG_ DcDc1LoadshedRequest : 6|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTHghSdCrrnt : 8|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTLwSdCrrnt : 10|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTHghSdVltgMnmm : 12|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTHghSdVltgMxmm : 14|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTLwSdVltgMnmm : 16|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTLwSdVltgMxmm : 18|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTCnvrtrTmprtr : 20|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTEltrnFltrTmprtr : 22|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTPwrEltrnsTmprtr : 24|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTSlBttrTrmnlVltg : 26|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTSlBttrTrmnlCrrnt : 28|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTSlBttrTrmnlTmprtr : 30|2@1+ (1,0) [0|3] "" RC
+ SG_ DD1PwrLmtDTUndfndRsn : 32|2@1+ (1,0) [0|3] "" RC
+ SG_ DcDc1OperatingStatusCounter : 52|4@1+ (1,0) [0|15] "" RC
+ SG_ DcDc1OperatingStatusCrc : 56|8@1+ (1,0) [0|250] "count" RC
+
+BO_ 2365315217 DCDC1T: 8 EPS_DCDC
+ SG_ DcDc1ConverterTemperature : 0|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ DD1CnvrtrEltrnFltrTmprtr : 8|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ DD1PwrEltrnsTmprtr : 16|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ DcDc1CoolantInTemperature : 24|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ DcDc1CoolantOutTemperature : 32|8@1+ (1,-40) [-40|210] "degC" RC
+
+BO_ 2364609681 DCDC1VC: 8 EPS_DCDC
+ SG_ DcDc1LowSideVoltage : 0|16@1+ (0.01,0) [0|642.55] "V" RC
+ SG_ DcDc1LowSideCurrent : 16|16@1+ (0.1,-3212.7) [-3212.7|3212.8] "A" RC
+ SG_ DcDc1HighSideVoltage : 32|16@1+ (0.05,0) [0|3212.75] "V" RC
+ SG_ DcDc1HighSideCurrent : 48|16@1+ (0.1,-3212.7) [-3212.7|3212.8] "A" RC
+
+BO_ 2351333959 MG1IC: 8 RC
+ SG_ MGIC_Crc : 0|8@1+ (1,0) [0|250] "count" TractionMCU1
+ SG_ MGIC_Cntr : 8|4@1+ (1,0) [0|15] "" TractionMCU1
+ SG_ MGIC_LtsRqstOvdMd : 12|4@1+ (1,0) [0|15] "" TractionMCU1
+ SG_ MGIC_LtsRqstOvdMax : 16|12@1+ (0.0625,-125) [-125|125.9375] "%" TractionMCU1
+ SG_ MGIC_LtsRqstOvdMin : 28|12@1+ (0.0625,-125) [-125|125.9375] "%" TractionMCU1
+ SG_ MGIC_StpntMdRqst : 43|5@1+ (1,0) [0|31] "" TractionMCU1
+ SG_ MGIC_StpntRqst : 48|16@1+ (0.00390625,-125) [-125|125.99609375] "%" TractionMCU1
+
+BO_ 2354545223 MG1IC2: 8 RC
+ SG_ MtrGnrtr1InvrtrCntrl2Cr : 0|8@1+ (1,0) [0|250] "count" TractionMCU1
+ SG_ MtrGnrtr1InvrtrCntrl2Cntr : 8|4@1+ (1,0) [0|15] "" TractionMCU1
+ SG_ MtrGnrtr1InvrtrPdCntrlAppllMd : 12|4@1+ (1,0) [0|15] "" TractionMCU1
+ SG_ MtGt1IvtPdCtNzdDtG : 16|8@1+ (0.03125,0) [0|7.8125] "%/(%/s)" TractionMCU1
+ SG_ MtGt1IvtPdCtNzdItG : 24|16@1+ (0.015625,0) [0|1003.984375] "%/(%/s)" TractionMCU1
+ SG_ MtGt1IvtPdCtNzdPptG : 40|12@1+ (0.0625,0) [0|250.9375] "%/%" TractionMCU1
+ SG_ MtGt1IvtPdCtFdFwdTq : 52|12@1+ (0.0625,-125) [-125|125.9375] "%" TractionMCU1
+
+BO_ 2566905927 MG1IC3: 6 RC
+ SG_ MGIC3_Crc : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_ct : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgParkRels : 16|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgBrk : 18|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgActDapEna : 20|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgSnsrLessEna : 22|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_spdSafeSet_rpm : 24|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_SafStop : 40|4@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 2355069511 MG1ILRM: 8 RC
+ SG_ MG1ILRM_CRC_u16 : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1ILRM_ct_u16 : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MG1ILRM_MotTqLmtMax_r32 : 12|12@1+ (0.0625,-125) [-125|130.9375] "" Vector__XXX
+ SG_ MG1ILRM_MotTqLmtMin_r32 : 24|12@1+ (0.0625,-125) [-125|130.9375] "" Vector__XXX
+ SG_ MG1ILRM_MotSpdLmtMax_r32 : 36|12@1+ (0.0625,-125) [-125|130.9375] "" Vector__XXX
+ SG_ MG1ILRM_MotSpdLmtMin_r32 : 48|12@1+ (0.0625,-125) [-125|130.9375] "" Vector__XXX
+
+BO_ 2364637570 MG1IMF1: 8 TractionMCU1
+ SG_ MGIMF1_Crc : 0|8@1+ (1,0) [0|250] "count" RC
+ SG_ MGIMF1_Cntr : 8|4@1+ (1,0) [0|15] "" RC
+ SG_ MGIMF1_CntrlLmtsOvrrdMd : 12|4@1+ (1,0) [0|15] "" RC
+ SG_ MGIMF1_CntrlStpntMd : 16|5@1+ (1,0) [0|31] "" RC
+ SG_ MGIMF1_HvlStts : 21|2@1+ (1,0) [0|3] "" RC
+
+BO_ 2566615426 MG1IMT: 8 TractionMCU1
+ SG_ MGIMT_t1 : 0|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIMT_t2 : 8|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIMT_t3 : 16|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIMT_t4 : 24|8@1+ (1,-40) [-40|210] "degC" RC
+
+BO_ 2365289858 MG1IR1: 8 TractionMCU1
+ SG_ MGIR1_Crc : 0|8@1+ (1,0) [0|250] "count" RC
+ SG_ MGIR1_Cntr : 8|4@1+ (1,0) [0|15] "" RC
+ SG_ MGIR1_Trq : 16|16@1+ (0.5,0) [0|32127.5] "Nm" RC
+ SG_ MGIR1_Spd : 32|16@1+ (4,0) [0|257020] "rpm" RC
+ SG_ MGIR1_Pwr : 48|16@1+ (0.0625,0) [0|4015.9375] "kW" RC
+
+BO_ 2365289346 MG1IR2: 8 TractionMCU1
+ SG_ MGIR2_Crc : 0|8@1+ (1,0) [0|250] "count" RC
+ SG_ MGIR2_Cntr : 8|4@1+ (1,0) [0|15] "" RC
+ SG_ MGIR2_Crrnt : 32|16@1+ (0.125,0) [0|8031.875] "A" RC
+ SG_ MGIR2_Vltg : 48|16@1+ (0.125,0) [0|8031.875] "V" RC
+
+BO_ 2365289602 MG1IS1: 8 TractionMCU1
+ SG_ MGIS1_Crc : 0|8@1+ (1,0) [0|250] "count" RC
+ SG_ MGIS1_Cntr : 8|4@1+ (1,0) [0|15] "" RC
+ SG_ MGIS1_Tq : 12|12@1+ (0.0625,-125) [-125|125.9375] "%" RC
+ SG_ MGIS1_Spd : 24|16@1+ (0.00390625,-125) [-125|125.99609375] "%" RC
+ SG_ MGIS1_DSdCrrnt : 40|12@1+ (0.0625,-125) [-125|125.9375] "%" RC
+ SG_ MGIS1_DSdVltg : 52|12@1+ (0.0625,-125) [-125|125.9375] "%" RC
+
+BO_ 2565966722 MG1IS2: 8 TractionMCU1
+ SG_ MGIS2_Crc : 0|8@1+ (1,0) [0|250] "count" RC
+ SG_ MGIS2_Cntr : 8|4@1+ (1,0) [0|15] "" RC
+ SG_ MGIS2_AvllMxmmTrq : 12|12@1+ (0.0625,-125) [-125|125.9375] "%" RC
+ SG_ MGIS2_AvllMnmmTrq : 24|12@1+ (0.0625,-125) [-125|125.9375] "%" RC
+
+BO_ 2566905730 MG1IS3: 8 TractionMCU1
+ SG_ MG1IS3_Crc : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1IS3_ct : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1IS3_FltLvl : 12|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1IS3_FltNum : 16|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1IS3_FltCod : 24|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1IS3_stSafe : 32|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MG1IS3_iPhase_A : 40|16@1+ (0.1,-3212.7) [0|0] "A" Vector__XXX
+
+BO_ 2566615682 MG1IT: 8 TractionMCU1
+ SG_ MGIT_t1 : 0|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIT_t2 : 8|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIT_t3 : 16|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIT_t4 : 24|8@1+ (1,-40) [-40|210] "degC" RC
+ SG_ MGIT_t5 : 32|8@1+ (1,-40) [-40|210] "degC" RC
+
+BO_ 2351335239 MG2IC: 8 RC
+ SG_ MGIC_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIC_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMd : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMax : 16|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMin : 28|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIC_StpntMdRqst : 43|5@1+ (1,0) [0|31] "" Vector__XXX
+ SG_ MGIC_StpntRqst : 48|16@1+ (0.00390625,-125) [-125|125.99609375] "%" Vector__XXX
+
+BO_ 2566907207 MG2IC3: 8 RC
+ SG_ MGIC3_Crc : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_ct : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgParkRels : 16|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgBrk : 18|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgActDapEna : 20|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgSnsrLessEna : 22|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_spdSafeSet_rpm : 24|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_SafStop : 40|4@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 2365289607 MG2IS1: 8 PumpMCU1
+ SG_ MGIS1_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIS1_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIS1_Tq : 12|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS1_Spd : 24|16@1+ (0.00390625,-125) [-125|125.99609375] "%" Vector__XXX
+ SG_ MGIS1_DSdCrrnt : 40|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS1_DSdVltg : 52|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+
+BO_ 2565966727 MG2IS2: 8 PumpMCU1
+ SG_ MGIS2_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIS2_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIS2_AvllMxmmTrq : 12|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS2_AvllMnmmTrq : 24|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+
+BO_ 2364637575 MG2MF1: 8 PumpMCU1
+ SG_ MGIMF1_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIMF1_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIMF1_CntrlLmtsOvrrdMd : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIMF1_CntrlStpntMd : 16|5@1+ (1,0) [0|31] "" Vector__XXX
+ SG_ MGIMF1_HvlStts : 21|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 2351335495 MG3IC: 8 RC
+ SG_ MGIC_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIC_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMd : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMax : 16|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMin : 28|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIC_StpntMdRqst : 43|5@1+ (1,0) [0|31] "" Vector__XXX
+ SG_ MGIC_StpntRqst : 48|16@1+ (0.00390625,-125) [-125|125.99609375] "%" Vector__XXX
+
+BO_ 2566901831 MG3IC3: 8 RC
+ SG_ MGIC3_Crc : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_ct : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgParkRels : 16|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgBrk : 18|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgActDapEna : 20|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgSnsrLessEna : 22|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_spdSafeSet_rpm : 24|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_SafStop : 40|4@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 2364637576 MG3IMF1: 8 PumpMCU2
+ SG_ MGIMF1_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIMF1_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIMF1_CntrlLmtsOvrrdMd : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIMF1_CntrlStpntMd : 16|5@1+ (1,0) [0|31] "" Vector__XXX
+ SG_ MGIMF1_HvlStts : 21|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 2365289608 MG3IS1: 8 PumpMCU2
+ SG_ MGIS1_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIS1_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIS1_Tq : 12|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS1_Spd : 24|16@1+ (0.00390625,-125) [-125|125.99609375] "%" Vector__XXX
+ SG_ MGIS1_DSdCrrnt : 40|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS1_DSdVltg : 52|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+
+BO_ 2351334215 MG4IC: 8 RC
+ SG_ MGIC_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIC_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMd : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMax : 16|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIC_LtsRqstOvdMin : 28|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIC_StpntMdRqst : 43|5@1+ (1,0) [0|31] "" Vector__XXX
+ SG_ MGIC_StpntRqst : 48|16@1+ (0.00390625,-125) [-125|125.99609375] "%" Vector__XXX
+
+BO_ 2566902087 MG4IC3: 8 RC
+ SG_ MGIC3_Crc : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_ct : 8|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgParkRels : 16|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgBrk : 18|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgActDapEna : 20|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_flgSnsrLessEna : 22|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_spdSafeSet_rpm : 24|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ MGIC3_SafStop : 40|4@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 2364637571 MG4IMF1: 8 TractionMCU2
+ SG_ MGIMF1_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIMF1_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIMF1_CntrlLmtsOvrrdMd : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIMF1_CntrlStpntMd : 16|5@1+ (1,0) [0|31] "" Vector__XXX
+ SG_ MGIMF1_HvlStts : 21|2@1+ (1,0) [0|3] "" Vector__XXX
+
+BO_ 2365289603 MG4IS1: 8 TractionMCU2
+ SG_ MGIS1_Crc : 0|8@1+ (1,0) [0|250] "count" Vector__XXX
+ SG_ MGIS1_Cntr : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ MGIS1_Tq : 12|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS1_Spd : 24|16@1+ (0.00390625,-125) [-125|125.99609375] "%" Vector__XXX
+ SG_ MGIS1_DSdCrrnt : 40|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+ SG_ MGIS1_DSdVltg : 52|12@1+ (0.0625,-125) [-125|125.9375] "%" Vector__XXX
+
+CM_ BO_ 2364609095 "DC/DC Converter 1 Control";
+CM_ SG_ 2364609095 DcDc1OperationalCommand "工作模式指令";
+CM_ SG_ 2364609095 DcDc1ControlCounter "DCDC的控制技术";
+CM_ SG_ 2364609095 DcDc1LowSideVoltageBuckSetpoint "低压端电压设定值";
+CM_ SG_ 2364609095 DD1HghSdVltgBstStpnt "DC/DC 1 High Side Voltage Boost Setpoint: The set point for regulating the high side voltage during boost mode.";
+CM_ SG_ 2364609095 DD1LwSdVltgBkDfltStpnt "DC/DC 1 Low Side Voltage Buck Default Setpoint: The set point for the converter default low side voltage during buck mode.   This setting may be used for when communication has been lost with the controlling device.  When set to Not Available (FFFFh)...";
+CM_ SG_ 2364609095 DcDc1ControlCrc "CRC控制功能";
+CM_ BO_ 2365315399 "DC/DC Converter 1 Low Side Limits";
+CM_ SG_ 2365315399 DD1LwSdVltgMnmmLmtRqst "DC/DC 1 Low Side Voltage Minimum Limit Request: The minimum allowed low side voltage requested by a separate device.   Under normal conditions this requested limit would be reflected in SPN 8827.";
+CM_ SG_ 2365315399 DD1LwSdVltgMxmmLmtRqst "DC/DC 1 Low Side Voltage Maximum Limit Request: The maximum allowed low side voltage requested by a separate device.   Under normal conditions this requested limit would be reflected in SPN 8828.";
+CM_ SG_ 2365315399 DD1LwSdCrrntMxmmLmtRqst "DC/DC 1 Low Side Current Maximum Limit Request: The maximum allowed low side current requested by a separate device.   Under normal conditions this requested limit would be reflected in SPN 8829.";
+CM_ BO_ 2364609425 "DC/DC Converter 1 Operating Status";
+CM_ SG_ 2364609425 DcDc1OperationalStatus "DC/DC 1 Operational Status: Operating state of the DC/DC Converter0000b = Disabled 0001b = Initialization in process.  The device is powering up.  This process may include both internal checks, as well as system checks being run by the DC/DC Converte...";
+CM_ SG_ 2364609425 DcDc1HvilStatus "高压互锁状态";
+CM_ SG_ 2364609425 DcDc1LoadshedRequest "DC/DC 1 Loadshed Request: The loadshed request is a request to the controlling device to reduce the DC/DC Converter loads.  The Loadshed Requested state is an indication that this DC/DC Converter has a malfunction or is in a limit condition and if th...";
+CM_ SG_ 2364609425 DD1PwrLmtDTHghSdCrrnt "DC/DC 1 Power Limit due to High Side Current: Indicates whether or not output power is being limited due to high side current (see SPN 8588) approaching or exceeding the maximum limit (see SPN 8565).00b = No power limit for this reason01b = Power lim...";
+CM_ SG_ 2364609425 DD1PwrLmtDTLwSdCrrnt "DC/DC 1 Power Limit due to Low Side Current: Indicates whether or not output power is being limited due to low side current (see SPN 8586) approaching or exceeding the maximum limit (see SPN 8568).00b = No power limit for this reason01b = Power limit...";
+CM_ SG_ 2364609425 DD1PwrLmtDTHghSdVltgMnmm "DC/DC 1 Power Limit due to High Side Voltage Minimum: Indicates whether or not output power is being limited due to high side voltage (see SPN 8587) approaching or falling below the minimum limit (see SPN 8563).00b = No power limit for this reason01b...";
+CM_ SG_ 2364609425 DD1PwrLmtDTHghSdVltgMxmm "DC/DC 1 Power Limit due to High Side Voltage Maximum: Indicates whether or not output power is being limited due to high side voltage (see SPN 8587) approaching or exceeding the maximum limit (see SPN 8564).00b = No power limit for this reason01b = P...";
+CM_ SG_ 2364609425 DD1PwrLmtDTLwSdVltgMnmm "DC/DC 1 Power Limit due to Low Side Voltage Minimum: Indicates whether or not output power is being limited due to low side voltage (see SPN 8585) approaching or falling below the minimum limit (see SPN 8566).00b = No power limit for this reason01b =...";
+CM_ SG_ 2364609425 DD1PwrLmtDTLwSdVltgMxmm "DC/DC 1 Power Limit due to Low Side Voltage Maximum: Indicates whether or not output power is being limited due to low side voltage (see SPN 8585) approaching or exceeding the maximum limit (see SPN 8567).00b = No power limit for this reason01b = Pow...";
+CM_ SG_ 2364609425 DD1PwrLmtDTCnvrtrTmprtr "DC/DC 1 Power Limit due to Converter Temperature: Indicates whether or not output power is being limited due to Converter Temperature (see SPN 8592) approaching or exceeding the maximum limit.00b = No power limit for this reason01b = Power limited fo...";
+CM_ SG_ 2364609425 DD1PwrLmtDTEltrnFltrTmprtr "DC/DC 1 Power Limit due to Electronic Filter Temperature: Indicates whether or not output power is being limited due to Output Electronic Filter Temperature (see SPN 8693) approaching or exceeding the maximum limit.00b = No power limit for this reaso...";
+CM_ SG_ 2364609425 DD1PwrLmtDTPwrEltrnsTmprtr "DC/DC 1 Power Limit due to Power Electronics Temperature: Indicates whether or not output power is being limited due to Power Electronics Temperature (see SPN 8594) approaching or exceeding the maximum limit.00b = No power limit for this reason01b = ...";
+CM_ SG_ 2364609425 DD1PwrLmtDTSlBttrTrmnlVltg "DC/DC 1 Power Limit due to SLI Battery Terminal Voltage: Indicates whether or not output power is being limited due to the SLI battery terminal voltage (see SPN 8589) approaching or exceeding limits (see SPN 8817).00b = No power limit for this reason...";
+CM_ SG_ 2364609425 DD1PwrLmtDTSlBttrTrmnlCrrnt "DC/DC 1 Power Limit due to SLI Battery Terminal Current: Indicates whether or not output power is being limited due to the SLI battery terminal current (see SPN 8590) approaching or exceeding limits (see SPN 8818).00b = No power limit for this reason...";
+CM_ SG_ 2364609425 DD1PwrLmtDTSlBttrTrmnlTmprtr "DC/DC 1 Power Limit due to SLI Battery Terminal Temperature: Indicates whether or not output power is being limited due to the SLI battery terminal temperature (see SPN 8591) approaching or exceeding limits (see SPN 8819).00b = No power limit for thi...";
+CM_ SG_ 2364609425 DD1PwrLmtDTUndfndRsn "DC/DC 1 Power Limit due to Undefined Reason: Indicates whether or not output power is being limited due to an undefined reason.00b = No power limit for this reason01b = Power limited for this reason10b = Error11b = Not Available";
+CM_ SG_ 2364609425 DcDc1OperatingStatusCounter "DC/DC 1 Operating Status Counter: The message counter is used to detect situations where the transmitting ECU malfunction repeats the same frame all the time. The receiver of the information may use the counter parameter to detect this situation. The...";
+CM_ SG_ 2364609425 DcDc1OperatingStatusCrc "DC/DC 1 Operating Status CRC: The CRC is defined as follows: • Length: 8 bits• Polynomial: x^8+x^5+x^3+x^2+x+1• Initial Value: FFh• Input Data Reflection: Not reflected• Result Data Reflection: Not reflected• XOR value: FFh SAE makes no claim of the ...";
+CM_ BO_ 2365315217 "DC/DC Converter 1 Temperatures";
+CM_ SG_ 2365315217 DcDc1ConverterTemperature "DC/DC 1 Converter Temperature: Parameter indicating the temperature of the DC/DC Converter (e.g, controller, circuit board, enclosure).";
+CM_ SG_ 2365315217 DD1CnvrtrEltrnFltrTmprtr "DC/DC 1 Converter Electronic Filter Temperature: Parameter indicating the temperature of the electronic components that make up the DC/DC Converter filter.";
+CM_ SG_ 2365315217 DD1PwrEltrnsTmprtr "DC/DC 1 Power Electronics Temperature: Parameter indicating the temperature of the DC/DC Converter power electronics components (e.g, switch or heatsink).";
+CM_ SG_ 2365315217 DcDc1CoolantInTemperature "DC/DC 1 Coolant  In Temperature: Parameter indicating the temperature of the DC/DC Converter Coolant measured at the input of the converter";
+CM_ SG_ 2365315217 DcDc1CoolantOutTemperature "DC/DC 1 Coolant Out Temperature: Parameter indicating the temperature of the DC/DC Converter Coolant measured at the output of the converter";
+CM_ BO_ 2364609681 "DC/DC Converter 1 Voltage and Current";
+CM_ SG_ 2364609681 DcDc1LowSideVoltage "DC/DC 1 Low Side Voltage: Indicates the measured SLI battery or low side voltage measured at the point of control inside the DC/DC Converter.";
+CM_ SG_ 2364609681 DcDc1LowSideCurrent "DC/DC 1 Low Side Current: Indicates the measured SLI battery or low side current measured at the point of control inside the DC/DC Converter.  The current is positive if the converter is charging the SLI battery from the hybrid battery.";
+CM_ SG_ 2364609681 DcDc1HighSideVoltage "DC/DC 1 High Side Voltage: Indicates the measured HVES or high side voltage measured at the point of control inside the DC/DC Converter.";
+CM_ SG_ 2364609681 DcDc1HighSideCurrent "DC/DC 1 High Side Current: Indicates the measured HVES or high side current measured at the point of control inside the DC/DC Converter.  The current is negative if the converter is charging the SLI battery from the hybrid battery.";
+CM_ BO_ 2351333959 "Motor/Generator 1 Inverter Control";
+CM_ SG_ 2351333959 MGIC_Crc "CRC循环冗余校验";
+CM_ SG_ 2351333959 MGIC_Cntr "心跳计数";
+CM_ SG_ 2351333959 MGIC_LtsRqstOvdMd "Motor/Generator 1 Inverter Control Limits Request Override Mode: This parameter provides a way to temporarily override limits that are being received by the inverter in other messages.  It allows a specific type of limit to be transmitted at a high r...";
+CM_ SG_ 2351333959 MGIC_LtsRqstOvdMax "Motor/Generator 1 Inverter Control Limits Request Override Maximum: The Maximum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits a...";
+CM_ SG_ 2351333959 MGIC_LtsRqstOvdMin "Motor/Generator 1 Inverter Control Limits Request Override Minimum : The Minimum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits ...";
+CM_ SG_ 2351333959 MGIC_StpntMdRqst "Motor/Generator 1 Inverter Control Setpoint Mode Request: Requests the modes for this instance of the inverter.  See SPN 10167 [Control Setpoint Mode] for the feedback to this request.Passive modes:  Modes where the inverter does not actively control...";
+CM_ SG_ 2351333959 MGIC_StpntRqst "Motor/Generator 1 Inverter Control Setpoint Request: Requests the set point for this inverter.  The type of set point requested by this parameter depends on the value of SPN 10162 [Control Setpoint Mode Request] as follows:Passive Modes: In any Passi...";
+CM_ BO_ 2354545223 "Motor/Generator 1 Inverter Control 2";
+CM_ SG_ 2354545223 MtrGnrtr1InvrtrCntrl2Cr "CRC循环冗余校验";
+CM_ SG_ 2354545223 MtrGnrtr1InvrtrCntrl2Cntr "心跳计数";
+CM_ SG_ 2354545223 MtrGnrtr1InvrtrPdCntrlAppllMd "Motor/Generator 1 Inverter PID Control Applicable Mode : Defines the Mode that the PID Gain parameters apply for this instance of the inverter.  See SPN 10167 [Control Setpoint Mode] for a definition of modes for control purposes.Applicable modes:000...";
+CM_ SG_ 2354545223 MtGt1IvtPdCtNzdDtG "Motor/Generator 1 Inverter PID Control Normalized Differential Gain: A PID controller can be parametrized by factors Kp, Ki and Kd. This parameter defines the normalized differential gain (Kdn) for control applications in this inverter instance. The ...";
+CM_ SG_ 2354545223 MtGt1IvtPdCtNzdItG "Motor/Generator 1 Inverter PID Control Normalized Integral Gain: A PID controller can be parametrized by factors Kp, Ki and Kd. This parameter defines the normalized integral gain (Kin) for control applications in this inverter instance. The normaliz...";
+CM_ SG_ 2354545223 MtGt1IvtPdCtNzdPptG "Motor/Generator 1 Inverter PID Control Normalized Proportional Gain: A PID controller can be parametrized by factors Kp, Ki and Kd. This parameter defines the normalized proportional gain (Kpn) for control applications in this inverter instance. The ...";
+CM_ SG_ 2354545223 MtGt1IvtPdCtFdFwdTq "Motor/Generator 1 Inverter PID Control Feed-Forward Torque: A PID controller can have a Feed-Forward Torque added to its output. This parameter defines the Feed-Forward Torque Setpoint for control applications in this inverter instance. The Setpoint ...";
+CM_ BO_ 2566905927 "Motor Generator 1 Inverter Control 3";
+CM_ SG_ 2566905927 MGIC3_Crc "CRC循环冗余校验";
+CM_ SG_ 2566905927 MGIC3_ct "心跳计数";
+CM_ SG_ 2355069511 MG1ILRM_CRC_u16 "CRC循环冗余校验";
+CM_ SG_ 2355069511 MG1ILRM_ct_u16 "心跳计数";
+CM_ BO_ 2364637570 "Motor/Generator 1 Inverter Mode Feedback 1";
+CM_ SG_ 2364637570 MGIMF1_Crc "CRC循环冗余校验";
+CM_ SG_ 2364637570 MGIMF1_Cntr "心跳计数";
+CM_ SG_ 2364637570 MGIMF1_CntrlLmtsOvrrdMd "Motor/Generator 1 Inverter Control Limits Override Mode: During normal operation this will have the same value as SPN 10159 [Control Limits Request Override Mode].  0 = Operating limits are not overridden.  If a limit was previously active, then it h...";
+CM_ SG_ 2364637570 MGIMF1_CntrlStpntMd "Motor/Generator 1 Inverter Control Setpoint Mode: Reports the inverter mode (See SPN 10162 [Control Setpoint Mode Request] for requested mode).Passive modes:  0 = Powered On - the inverter is commanded to be powered on and able to communicate, but th...";
+CM_ SG_ 2364637570 MGIMF1_HvlStts "Motor/Generator 1 Inverter HVIL Status: Reports the High Voltage Interlock Loop (HVIL) state.00b = HVIL Closed01b = HVIL Open10b = Error11b = Not Available";
+CM_ BO_ 2566615426 "Motor/Generator 1 Inverter Motor Temperature";
+CM_ SG_ 2566615426 MGIMT_t1 "Motor/Generator 1 Temperature 1: The exact location of this temperature can be defined by the manufacturer.  It is intended to located somewhere on the motor.";
+CM_ SG_ 2566615426 MGIMT_t2 "Motor/Generator 1 Temperature 2: The exact location of this temperature can be defined by the manufacturer.  It is intended to located somewhere on the motor.";
+CM_ SG_ 2566615426 MGIMT_t3 "Motor/Generator 1 Temperature 3: The exact location of this temperature can be defined by the manufacturer.  It is intended to located somewhere on the motor.";
+CM_ SG_ 2566615426 MGIMT_t4 "Motor/Generator 1 Temperature 4: The exact location of this temperature can be defined by the manufacturer.  It is intended to located somewhere on the motor.";
+CM_ BO_ 2365289858 "Motor/Generator 1 Inverter Reference 1";
+CM_ SG_ 2365289858 MGIR1_Crc "CRC循环冗余校验";
+CM_ SG_ 2365289858 MGIR1_Cntr "心跳计数";
+CM_ SG_ 2365289858 MGIR1_Trq "Motor/Generator 1 Inverter Reference Torque: This value is used for converting torque in percent to units of Nm.Value in Nm = (Percent Value)/(100%) * (Reference Torque)For example, if this parameter has a value of 400 Nm and the percent value is equ...";
+CM_ SG_ 2365289858 MGIR1_Spd "Motor/Generator 1 Inverter Reference Speed: This value is used for converting Speed in percent to units of rpm.Value in rpm = (Percent Value)/(100%) * (Reference Speed)For example, if this parameter has a value of 8192 rpm and the percent value is eq...";
+CM_ SG_ 2365289858 MGIR1_Pwr "Motor/Generator 1 Inverter Reference Power: This value is used for converting power in percent to units of kW.  It is applicable to both mechanical and electrical power.(Value in kW) = (Percent Value)/(100%) * (Reference Power)For example, if this pa...";
+CM_ BO_ 2365289346 "Motor/Generator 1 Inverter Reference 2";
+CM_ SG_ 2365289346 MGIR2_Crc "CRC循环冗余校验";
+CM_ SG_ 2365289346 MGIR2_Cntr "心跳计数";
+CM_ SG_ 2365289346 MGIR2_Crrnt "Motor/Generator 1 Inverter Reference Current: This value is used for converting inverter current in percent to units of Amps (RMS or DC).(Value in Amps) = (Percent Value)/(100%) * (Reference Current)For example, if this parameter has a value of 200 A...";
+CM_ SG_ 2365289346 MGIR2_Vltg "Motor/Generator 1 Inverter Reference Voltage: This value is used for converting inverter voltage in percent to units of Volts (RMS or DC).(Value in Volts) = (Percent Value)/(100%) * (Reference Voltage)For example, if this parameter has a value of 400...";
+CM_ BO_ 2365289602 "Motor/Generator 1 Inverter Status 1";
+CM_ SG_ 2365289602 MGIS1_Crc "CRC循环冗余校验";
+CM_ SG_ 2365289602 MGIS1_Cntr "心跳计数";
+CM_ SG_ 2365289602 MGIS1_Tq "Motor/Generator 1 Torque: The measured or estimated motor torque.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.Refer to SPN 10170 [Reference Torque] to convert % to Nm.The motor is generating when ...";
+CM_ SG_ 2365289602 MGIS1_Spd "Motor/Generator 1 Speed: The measured or estimated motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.   Refer to SPN 10171 [Reference Speed] to convert % to rpm.";
+CM_ SG_ 2365289602 MGIS1_DSdCrrnt "Motor/Generator 1 Inverter DC Side Current: This is the DC side current of the inverter.Refer to SPN 10202 [Reference Current] to convert % to Amps.While motoring, the current is defined as positive.  For example, in a hybrid propulsion system, posit...";
+CM_ SG_ 2365289602 MGIS1_DSdVltg "Motor/Generator 1 Inverter DC Side Voltage: The measured or estimated DC side voltage.  Refer to SPN 10203 [Reference Voltage] to convert % to Volts.";
+CM_ BO_ 2565966722 "Motor/Generator 1 Inverter Status 2";
+CM_ SG_ 2565966722 MGIS2_Crc "CRC循环冗余校验";
+CM_ SG_ 2565966722 MGIS2_Cntr "心跳计数";
+CM_ SG_ 2565966722 MGIS2_AvllMxmmTrq "Motor/Generator 1 Available Maximum Torque: This is an estimate of the maximum available motor torque including active deratings at the present motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the m...";
+CM_ SG_ 2565966722 MGIS2_AvllMnmmTrq "Motor/Generator 1 Available Minimum Torque: This is an estimate of the minimum available motor torque including active deratings at the present motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the m...";
+CM_ SG_ 2566905730 MG1IS3_Crc "CRC循环冗余校验";
+CM_ SG_ 2566905730 MG1IS3_ct "心跳计数";
+CM_ BO_ 2566615682 "Motor/Generator 1 Inverter Temperature";
+CM_ SG_ 2566615682 MGIT_t1 "Motor/Generator 1 Inverter Temperature 1: The exact location of this temperature can be defined by the manufacturer.  It is intended to be located somewhere on the inverter.";
+CM_ SG_ 2566615682 MGIT_t2 "Motor/Generator 1 Inverter Temperature 2: The exact location of this temperature can be defined by the manufacturer.  It is intended to be located somewhere on the inverter.";
+CM_ SG_ 2566615682 MGIT_t3 "Motor/Generator 1 Inverter Temperature 3: The exact location of this temperature can be defined by the manufacturer.  It is intended to be located somewhere on the inverter.";
+CM_ SG_ 2566615682 MGIT_t4 "Motor/Generator 1 Inverter Temperature 4: The exact location of this temperature can be defined by the manufacturer.  It is intended to be located somewhere on the inverter.";
+CM_ SG_ 2566615682 MGIT_t5 "Motor/Generator 1 Inverter Temperature 5: The exact location of this temperature can be defined by the manufacturer. It is intended to be located somewhere on the inverter.";
+CM_ SG_ 2351335239 MGIC_Crc "CRC循环冗余校验";
+CM_ SG_ 2351335239 MGIC_Cntr "心跳计数";
+CM_ SG_ 2351335239 MGIC_LtsRqstOvdMd "Motor/Generator 1 Inverter Control Limits Request Override Mode: This parameter provides a way to temporarily override limits that are being received by the inverter in other messages.  It allows a specific type of limit to be transmitted at a high r...";
+CM_ SG_ 2351335239 MGIC_LtsRqstOvdMax "Motor/Generator 1 Inverter Control Limits Request Override Maximum: The Maximum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits a...";
+CM_ SG_ 2351335239 MGIC_LtsRqstOvdMin "Motor/Generator 1 Inverter Control Limits Request Override Minimum : The Minimum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits ...";
+CM_ SG_ 2351335239 MGIC_StpntMdRqst "Motor/Generator 1 Inverter Control Setpoint Mode Request: Requests the modes for this instance of the inverter.  See SPN 10167 [Control Setpoint Mode] for the feedback to this request.Passive modes:  Modes where the inverter does not actively control...";
+CM_ SG_ 2351335239 MGIC_StpntRqst "Motor/Generator 1 Inverter Control Setpoint Request: Requests the set point for this inverter.  The type of set point requested by this parameter depends on the value of SPN 10162 [Control Setpoint Mode Request] as follows:Passive Modes: In any Passi...";
+CM_ SG_ 2566907207 MGIC3_Crc "CRC循环冗余校验";
+CM_ SG_ 2566907207 MGIC3_ct "心跳计数";
+CM_ SG_ 2365289607 MGIS1_Crc "CRC循环冗余校验";
+CM_ SG_ 2365289607 MGIS1_Cntr "心跳计数";
+CM_ SG_ 2365289607 MGIS1_Tq "Motor/Generator 1 Torque: The measured or estimated motor torque.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.Refer to SPN 10170 [Reference Torque] to convert % to Nm.The motor is generating when ...";
+CM_ SG_ 2365289607 MGIS1_Spd "Motor/Generator 1 Speed: The measured or estimated motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.   Refer to SPN 10171 [Reference Speed] to convert % to rpm.";
+CM_ SG_ 2365289607 MGIS1_DSdCrrnt "Motor/Generator 1 Inverter DC Side Current: This is the DC side current of the inverter.Refer to SPN 10202 [Reference Current] to convert % to Amps.While motoring, the current is defined as positive.  For example, in a hybrid propulsion system, posit...";
+CM_ SG_ 2365289607 MGIS1_DSdVltg "Motor/Generator 1 Inverter DC Side Voltage: The measured or estimated DC side voltage.  Refer to SPN 10203 [Reference Voltage] to convert % to Volts.";
+CM_ SG_ 2565966727 MGIS2_Crc "CRC循环冗余校验";
+CM_ SG_ 2565966727 MGIS2_Cntr "心跳计数";
+CM_ SG_ 2565966727 MGIS2_AvllMxmmTrq "Motor/Generator 1 Available Maximum Torque: This is an estimate of the maximum available motor torque including active deratings at the present motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the m...";
+CM_ SG_ 2565966727 MGIS2_AvllMnmmTrq "Motor/Generator 1 Available Minimum Torque: This is an estimate of the minimum available motor torque including active deratings at the present motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the m...";
+CM_ SG_ 2364637575 MGIMF1_Crc "CRC循环冗余校验";
+CM_ SG_ 2364637575 MGIMF1_Cntr "心跳计数";
+CM_ SG_ 2364637575 MGIMF1_CntrlLmtsOvrrdMd "Motor/Generator 1 Inverter Control Limits Override Mode: During normal operation this will have the same value as SPN 10159 [Control Limits Request Override Mode].  0 = Operating limits are not overridden.  If a limit was previously active, then it h...";
+CM_ SG_ 2364637575 MGIMF1_CntrlStpntMd "Motor/Generator 1 Inverter Control Setpoint Mode: Reports the inverter mode (See SPN 10162 [Control Setpoint Mode Request] for requested mode).Passive modes:  0 = Powered On - the inverter is commanded to be powered on and able to communicate, but th...";
+CM_ SG_ 2364637575 MGIMF1_HvlStts "Motor/Generator 1 Inverter HVIL Status: Reports the High Voltage Interlock Loop (HVIL) state.00b = HVIL Closed01b = HVIL Open10b = Error11b = Not Available";
+CM_ SG_ 2351335495 MGIC_Crc "CRC循环冗余校验";
+CM_ SG_ 2351335495 MGIC_Cntr "心跳计数";
+CM_ SG_ 2351335495 MGIC_LtsRqstOvdMd "Motor/Generator 1 Inverter Control Limits Request Override Mode: This parameter provides a way to temporarily override limits that are being received by the inverter in other messages.  It allows a specific type of limit to be transmitted at a high r...";
+CM_ SG_ 2351335495 MGIC_LtsRqstOvdMax "Motor/Generator 1 Inverter Control Limits Request Override Maximum: The Maximum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits a...";
+CM_ SG_ 2351335495 MGIC_LtsRqstOvdMin "Motor/Generator 1 Inverter Control Limits Request Override Minimum : The Minimum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits ...";
+CM_ SG_ 2351335495 MGIC_StpntMdRqst "Motor/Generator 1 Inverter Control Setpoint Mode Request: Requests the modes for this instance of the inverter.  See SPN 10167 [Control Setpoint Mode] for the feedback to this request.Passive modes:  Modes where the inverter does not actively control...";
+CM_ SG_ 2351335495 MGIC_StpntRqst "Motor/Generator 1 Inverter Control Setpoint Request: Requests the set point for this inverter.  The type of set point requested by this parameter depends on the value of SPN 10162 [Control Setpoint Mode Request] as follows:Passive Modes: In any Passi...";
+CM_ SG_ 2566901831 MGIC3_Crc "CRC循环冗余校验";
+CM_ SG_ 2566901831 MGIC3_ct "心跳计数";
+CM_ SG_ 2364637576 MGIMF1_Crc "CRC循环冗余校验";
+CM_ SG_ 2364637576 MGIMF1_Cntr "心跳计数";
+CM_ SG_ 2364637576 MGIMF1_CntrlLmtsOvrrdMd "Motor/Generator 1 Inverter Control Limits Override Mode: During normal operation this will have the same value as SPN 10159 [Control Limits Request Override Mode].  0 = Operating limits are not overridden.  If a limit was previously active, then it h...";
+CM_ SG_ 2364637576 MGIMF1_CntrlStpntMd "Motor/Generator 1 Inverter Control Setpoint Mode: Reports the inverter mode (See SPN 10162 [Control Setpoint Mode Request] for requested mode).Passive modes:  0 = Powered On - the inverter is commanded to be powered on and able to communicate, but th...";
+CM_ SG_ 2364637576 MGIMF1_HvlStts "Motor/Generator 1 Inverter HVIL Status: Reports the High Voltage Interlock Loop (HVIL) state.00b = HVIL Closed01b = HVIL Open10b = Error11b = Not Available";
+CM_ SG_ 2365289608 MGIS1_Crc "CRC循环冗余校验";
+CM_ SG_ 2365289608 MGIS1_Cntr "心跳计数";
+CM_ SG_ 2365289608 MGIS1_Tq "Motor/Generator 1 Torque: The measured or estimated motor torque.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.Refer to SPN 10170 [Reference Torque] to convert % to Nm.The motor is generating when ...";
+CM_ SG_ 2365289608 MGIS1_Spd "Motor/Generator 1 Speed: The measured or estimated motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.   Refer to SPN 10171 [Reference Speed] to convert % to rpm.";
+CM_ SG_ 2365289608 MGIS1_DSdCrrnt "Motor/Generator 1 Inverter DC Side Current: This is the DC side current of the inverter.Refer to SPN 10202 [Reference Current] to convert % to Amps.While motoring, the current is defined as positive.  For example, in a hybrid propulsion system, posit...";
+CM_ SG_ 2365289608 MGIS1_DSdVltg "Motor/Generator 1 Inverter DC Side Voltage: The measured or estimated DC side voltage.  Refer to SPN 10203 [Reference Voltage] to convert % to Volts.";
+CM_ SG_ 2351334215 MGIC_Crc "CRC循环冗余校验";
+CM_ SG_ 2351334215 MGIC_Cntr "心跳计数";
+CM_ SG_ 2351334215 MGIC_LtsRqstOvdMd "Motor/Generator 1 Inverter Control Limits Request Override Mode: This parameter provides a way to temporarily override limits that are being received by the inverter in other messages.  It allows a specific type of limit to be transmitted at a high r...";
+CM_ SG_ 2351334215 MGIC_LtsRqstOvdMax "Motor/Generator 1 Inverter Control Limits Request Override Maximum: The Maximum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits a...";
+CM_ SG_ 2351334215 MGIC_LtsRqstOvdMin "Motor/Generator 1 Inverter Control Limits Request Override Minimum : The Minimum limit requested by this parameter depends on the value of SPN 10159 [Control Limits Request Override Mode].In normal operating conditions, the inverter operating limits ...";
+CM_ SG_ 2351334215 MGIC_StpntMdRqst "Motor/Generator 1 Inverter Control Setpoint Mode Request: Requests the modes for this instance of the inverter.  See SPN 10167 [Control Setpoint Mode] for the feedback to this request.Passive modes:  Modes where the inverter does not actively control...";
+CM_ SG_ 2351334215 MGIC_StpntRqst "Motor/Generator 1 Inverter Control Setpoint Request: Requests the set point for this inverter.  The type of set point requested by this parameter depends on the value of SPN 10162 [Control Setpoint Mode Request] as follows:Passive Modes: In any Passi...";
+CM_ SG_ 2566902087 MGIC3_Crc "CRC循环冗余校验";
+CM_ SG_ 2566902087 MGIC3_ct "心跳计数";
+CM_ SG_ 2364637571 MGIMF1_Crc "CRC循环冗余校验";
+CM_ SG_ 2364637571 MGIMF1_Cntr "心跳计数";
+CM_ SG_ 2364637571 MGIMF1_CntrlLmtsOvrrdMd "Motor/Generator 1 Inverter Control Limits Override Mode: During normal operation this will have the same value as SPN 10159 [Control Limits Request Override Mode].  0 = Operating limits are not overridden.  If a limit was previously active, then it h...";
+CM_ SG_ 2364637571 MGIMF1_CntrlStpntMd "Motor/Generator 1 Inverter Control Setpoint Mode: Reports the inverter mode (See SPN 10162 [Control Setpoint Mode Request] for requested mode).Passive modes:  0 = Powered On - the inverter is commanded to be powered on and able to communicate, but th...";
+CM_ SG_ 2364637571 MGIMF1_HvlStts "Motor/Generator 1 Inverter HVIL Status: Reports the High Voltage Interlock Loop (HVIL) state.00b = HVIL Closed01b = HVIL Open10b = Error11b = Not Available";
+CM_ SG_ 2365289603 MGIS1_Crc "CRC循环冗余校验";
+CM_ SG_ 2365289603 MGIS1_Cntr "心跳计数";
+CM_ SG_ 2365289603 MGIS1_Tq "Motor/Generator 1 Torque: The measured or estimated motor torque.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.Refer to SPN 10170 [Reference Torque] to convert % to Nm.The motor is generating when ...";
+CM_ SG_ 2365289603 MGIS1_Spd "Motor/Generator 1 Speed: The measured or estimated motor speed.  This refers to the motor rotor output and excludes any gearbox that may be attached to the motor.   Refer to SPN 10171 [Reference Speed] to convert % to rpm.";
+CM_ SG_ 2365289603 MGIS1_DSdCrrnt "Motor/Generator 1 Inverter DC Side Current: This is the DC side current of the inverter.Refer to SPN 10202 [Reference Current] to convert % to Amps.While motoring, the current is defined as positive.  For example, in a hybrid propulsion system, posit...";
+CM_ SG_ 2365289603 MGIS1_DSdVltg "Motor/Generator 1 Inverter DC Side Voltage: The measured or estimated DC side voltage.  Refer to SPN 10203 [Reference Voltage] to convert % to Volts.";
+
+BA_DEF_ BO_ "GenMsgSendType" ENUM "cyclic","reserved","cyclicIfActive","reserved","reserved","reserved","reserved","reserved","noMsgSendType";
+BA_DEF_ BO_ "VFrameFormat" ENUM "StandardCAN","ExtendedCAN","reserved","J1939PG";
+BA_DEF_ BO_ "GenMsgCycleTime" INT 0 3600000;
+BA_DEF_ BO_ "GenMsgStartDelayTime" INT 0 100000;
+BA_DEF_ BO_ "GenMsgDelayTime" INT 0 1000;
+BA_DEF_ BO_ "GenSigStartValue" INT 0 10000;
+BA_DEF_ "BusType" STRING;
+BA_DEF_ "ProtocolType" STRING;
+
+BA_DEF_DEF_ "GenMsgSendType" "cyclic";
+BA_DEF_DEF_ "VFrameFormat" "StandardCAN";
+BA_DEF_DEF_ "GenMsgCycleTime" 0;
+BA_DEF_DEF_ "GenMsgStartDelayTime" 0;
+BA_DEF_DEF_ "GenMsgDelayTime" 0;
+BA_DEF_DEF_ "GenSigStartValue" 0;
+BA_DEF_DEF_ "BusType" "CAN";
+BA_DEF_DEF_ "ProtocolType" "CAN";
+
+BA_ "VFrameFormat" BO_ 2364609095 3;
+BA_ "VFrameFormat" BO_ 2365315399 3;
+BA_ "VFrameFormat" BO_ 2364609425 3;
+BA_ "VFrameFormat" BO_ 2365315217 3;
+BA_ "VFrameFormat" BO_ 2364609681 3;
+BA_ "VFrameFormat" BO_ 2351333959 3;
+BA_ "VFrameFormat" BO_ 2354545223 3;
+BA_ "VFrameFormat" BO_ 2566905927 3;
+BA_ "VFrameFormat" BO_ 2355069511 3;
+BA_ "VFrameFormat" BO_ 2364637570 3;
+BA_ "VFrameFormat" BO_ 2566615426 3;
+BA_ "VFrameFormat" BO_ 2365289858 3;
+BA_ "VFrameFormat" BO_ 2365289346 3;
+BA_ "VFrameFormat" BO_ 2365289602 3;
+BA_ "VFrameFormat" BO_ 2565966722 3;
+BA_ "VFrameFormat" BO_ 2566905730 3;
+BA_ "VFrameFormat" BO_ 2566615682 3;
+BA_ "VFrameFormat" BO_ 2351335239 3;
+BA_ "VFrameFormat" BO_ 2566907207 3;
+BA_ "VFrameFormat" BO_ 2365289607 3;
+BA_ "VFrameFormat" BO_ 2565966727 3;
+BA_ "VFrameFormat" BO_ 2364637575 3;
+BA_ "VFrameFormat" BO_ 2351335495 3;
+BA_ "VFrameFormat" BO_ 2566901831 3;
+BA_ "VFrameFormat" BO_ 2364637576 3;
+BA_ "VFrameFormat" BO_ 2365289608 3;
+BA_ "VFrameFormat" BO_ 2351334215 3;
+BA_ "VFrameFormat" BO_ 2566902087 3;
+BA_ "VFrameFormat" BO_ 2364637571 3;
+BA_ "VFrameFormat" BO_ 2365289603 3;
+

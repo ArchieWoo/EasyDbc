@@ -3,6 +3,7 @@ using EasyDbc.Generators;
 using EasyDbc.Models;
 using EasyDbc.Observers;
 using EasyDbc.Parsers.DbcLineParsers;
+using EasyUDE;
 
 namespace EasyDbc.Parsers
 {
@@ -46,15 +47,23 @@ namespace EasyDbc.Parsers
         }
         public static Dbc ParseFromStream(Stream dbcStream)
         {
-            using(var reader = new StreamReader(dbcStream))
+            ICharsetHandler handler = new CharsetHandler();
+            //string encodingName = handler.GetCharset(dbcStream);
+            dbcStream = handler.DetectAndConvert(dbcStream, TargetEncoding.UTF_8);
+
+            using (var reader = new StreamReader(dbcStream))
             {
                 return ParseFromReader(reader);
             }
         }
-
+        public static void ConvertEncodingFromPath(string dbcPath, string outputFilePath, TargetEncoding targetEncoding)
+        {
+            ICharsetHandler handler = new CharsetHandler();
+            handler.ConvertFileEncoding(dbcPath, outputFilePath, targetEncoding);
+        }
         public static Dbc Parse(string dbcText)
         {
-            using(var reader = new StringReader(dbcText))
+            using (var reader = new StringReader(dbcText))
             {
                 return ParseFromReader(reader);
             }
@@ -80,9 +89,9 @@ namespace EasyDbc.Parsers
             if (string.IsNullOrWhiteSpace(line))
                 return;
 
-            foreach(var parser in LineParsers)
+            foreach (var parser in LineParsers)
             {
-                if(parser.TryParse(line, builder, nextLineProvider))
+                if (parser.TryParse(line, builder, nextLineProvider))
                     break;
             }
         }

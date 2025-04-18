@@ -358,6 +358,47 @@ if(message.IsMultiplexed())
 	// ...
 }
 ```
+
+### Conversion d'encodage de fichiers DBC
+Pour la conversion depuis GB2312, il est recommandé d'utiliser la norme la plus récente GB18030, que Notepad++ peut reconnaître avec précision. Cette norme est rétrocompatible avec GB2312.
+Les formats de transcodage actuellement pris en charge sont les suivants :
+
+
+    ASCII,
+    UTF_8,          // Format de transformation Unicode (8 bits)
+    UTF_16LE,       // Format de transformation Unicode (16 bits, Little Endian)
+    UTF_16BE,       // Format de transformation Unicode (16 bits, Big Endian)
+    UTF_32BE,       // Format de transformation Unicode (32 bits, Big Endian)
+    UTF_32LE,       // Format de transformation Unicode (32 bits, Little Endian)
+    windows_1251,   // Cyrillique (Windows)
+    windows_1252,   // Européen occidental (Windows)
+    windows_1253,   // Grec (Windows)
+    windows_1255,   // Hébreu (Windows)
+    Big5,          // Chinois traditionnel
+    EUC_KR,        // Coréen (Code Unix étendu)
+    EUC_JP,        // Japonais (Code Unix étendu)
+    ISO_2022_JP,   // Japonais (Norme ISO)
+    ISO_2022_CN,   // Chinois (Norme ISO)
+    ISO_2022_KR,   // Coréen (Norme ISO)
+    HZ_GB_2312,    // Chinois (GB2312 en codage HZ)
+    Shift_JIS,     // Japonais (Shift JIS)
+    x_mac_cyrillic,// Cyrillique (Mac OS)
+    KOI8_R,        // Cyrillique (KOI8-R)
+    IBM855,        // Cyrillique (IBM)
+    IBM866,        // Cyrillique (codage IBM alternatif)
+    ISO_8859_2,    // Européen central
+    ISO_8859_5,    // Cyrillique
+    ISO_8859_7,    // Grec
+    ISO_8859_8,    // Hébreu
+    GBK,           // Chinois (GB2312 étendu)
+    GB2312,        // Chinois simplifié
+    GB18030        // Norme nationale chinoise actuelle
+
+```cs
+string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+
 ---
 # Contribution
 

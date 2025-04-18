@@ -357,6 +357,48 @@ if(message.IsMultiplexed())
 	// ...
 }
 ```
+
+### DBC File Encoding Conversion
+For GB2312 conversion, the latest standard GB18030 is recommended, which Notepad++ can accurately recognize. This standard is backward compatible with GB2312.
+Currently supported transcoding formats are as follows:
+
+
+    ASCII,
+    UTF_8,          // Unicode Transformation Format (8-bit)
+    UTF_16LE,       // Unicode Transformation Format (16-bit, Little Endian)
+    UTF_16BE,       // Unicode Transformation Format (16-bit, Big Endian)
+    UTF_32BE,       // Unicode Transformation Format (32-bit, Big Endian)
+    UTF_32LE,       // Unicode Transformation Format (32-bit, Little Endian)
+    windows_1251,   // Cyrillic (Windows)
+    windows_1252,   // Western European (Windows)
+    windows_1253,   // Greek (Windows)
+    windows_1255,   // Hebrew (Windows)
+    Big5,          // Traditional Chinese
+    EUC_KR,        // Korean (Extended Unix Code)
+    EUC_JP,        // Japanese (Extended Unix Code)
+    ISO_2022_JP,   // Japanese (ISO Standard)
+    ISO_2022_CN,   // Chinese (ISO Standard)
+    ISO_2022_KR,   // Korean (ISO Standard)
+    HZ_GB_2312,    // Chinese (GB2312 in HZ encoding)
+    Shift_JIS,     // Japanese (Shift JIS)
+    x_mac_cyrillic,// Cyrillic (Mac OS)
+    KOI8_R,        // Cyrillic (KOI8-R)
+    IBM855,        // Cyrillic (IBM)
+    IBM866,        // Cyrillic (alternative IBM encoding)
+    ISO_8859_2,    // Central European
+    ISO_8859_5,    // Cyrillic
+    ISO_8859_7,    // Greek
+    ISO_8859_8,    // Hebrew
+    GBK,           // Chinese (extended GB2312)
+    GB2312,        // Simplified Chinese
+    GB18030        // Current Chinese national standard
+
+
+```cs
+string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+
 ---
 # Contributing
 

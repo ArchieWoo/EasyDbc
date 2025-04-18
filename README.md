@@ -351,6 +351,48 @@ if(message.IsMultiplexed())
 	// ...
 }
 ```
+
+### DBC文件的转码
+对于GB2312的转码推荐使用最新标准GB18030，Notepad++可以精准识别，这个标准兼容了GB2312
+当前兼容的转码格式如下：
+
+
+    ASCII,          // 美国信息交换标准代码
+    UTF_8,          // Unicode转换格式 (8位)
+    UTF_16LE,       // Unicode转换格式 (16位，小端序)
+    UTF_16BE,       // Unicode转换格式 (16位，大端序)
+    UTF_32BE,       // Unicode转换格式 (32位，大端序)
+    UTF_32LE,       // Unicode转换格式 (32位，小端序)
+    windows_1251,   // 西里尔字母 (Windows)
+    windows_1252,   // 西欧语言 (Windows)
+    windows_1253,   // 希腊语 (Windows)
+    windows_1255,   // 希伯来语 (Windows)
+    Big5,          // 繁体中文 (大五码)
+    EUC_KR,        // 韩语 (扩展Unix编码)
+    EUC_JP,        // 日语 (扩展Unix编码)
+    ISO_2022_JP,   // 日语 (ISO标准)
+    ISO_2022_CN,   // 中文 (ISO标准)
+    ISO_2022_KR,   // 韩语 (ISO标准)
+    HZ_GB_2312,    // 中文 (HZ编码的GB2312)
+    Shift_JIS,     // 日语 (Shift JIS)
+    x_mac_cyrillic,// 西里尔字母 (Mac OS)
+    KOI8_R,        // 西里尔字母 (KOI8-R)
+    IBM855,        // 西里尔字母 (IBM)
+    IBM866,        // 西里尔字母 (替代IBM编码)
+    ISO_8859_2,    // 中欧语言
+    ISO_8859_5,    // 西里尔字母
+    ISO_8859_7,    // 希腊语
+    ISO_8859_8,    // 希伯来语
+    GBK,           // 中文 (扩展GB2312)
+    GB2312,        // 简体中文
+    GB18030        // 现行中国国家标准
+
+```cs
+string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+```
+
 ---
 # 贡献
 

@@ -418,6 +418,47 @@ if(message.IsMultiplexed())
 	// ...
 }
 ```
+
+### DBC 파일 인코딩 변환
+GB2312 변환에는 최신 표준인 GB18030을 추천합니다. Notepad++에서 정확하게 인식할 수 있으며 GB2312와 하위 호환됩니다.
+현재 지원되는 변환 인코딩 형식은 다음과 같습니다:
+
+
+    ASCII,
+    UTF_8,          // 유니코드 변환 형식 (8비트)
+    UTF_16LE,       // 유니코드 변환 형식 (16비트, 리틀 엔디안)
+    UTF_16BE,       // 유니코드 변환 형식 (16비트, 빅 엔디안)
+    UTF_32BE,       // 유니코드 변환 형식 (32비트, 빅 엔디안)
+    UTF_32LE,       // 유니코드 변환 형식 (32비트, 리틀 엔디안)
+    windows_1251,   // 키릴 문자 (Windows)
+    windows_1252,   // 서유럽 언어 (Windows)
+    windows_1253,   // 그리스 문자 (Windows)
+    windows_1255,   // 히브리 문자 (Windows)
+    Big5,          // 번체자 중국어
+    EUC_KR,        // 한국어 (확장 유닉스 코드)
+    EUC_JP,        // 일본어 (확장 유닉스 코드)
+    ISO_2022_JP,   // 일본어 (ISO 표준)
+    ISO_2022_CN,   // 중국어 (ISO 표준)
+    ISO_2022_KR,   // 한국어 (ISO 표준)
+    HZ_GB_2312,    // 중국어 (HZ 인코딩의 GB2312)
+    Shift_JIS,     // 일본어 (Shift JIS)
+    x_mac_cyrillic,// 키릴 문자 (Mac OS)
+    KOI8_R,        // 키릴 문자 (KOI8-R)
+    IBM855,        // 키릴 문자 (IBM)
+    IBM866,        // 키릴 문자 (대체 IBM 인코딩)
+    ISO_8859_2,    // 중앙 유럽 언어
+    ISO_8859_5,    // 키릴 문자
+    ISO_8859_7,    // 그리스 문자
+    ISO_8859_8,    // 히브리 문자
+    GBK,           // 중국어 (확장 GB2312)
+    GB2312,        // 간체자 중국어
+    GB18030        // 현행 중국 국가 표준
+
+```cs
+string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+
 ---
 # 기여
 

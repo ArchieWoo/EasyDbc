@@ -1,52 +1,81 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net462;netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Authors>Wu Qi</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <OutputType>Library</OutputType>
-    <Version>1.0.6</Version>
-	<PackageId>EasyDbc</PackageId>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>DBC Generation. 
-DBC File Parsing. 
-DBC Files Merge. 
-DBC export to excel. 
-Excel export to DBC.</Description>
-	  <RepositoryUrl>https://github.com/Vico-wu/EasyDbc</RepositoryUrl>
-	  <Title>EasyDbc</Title>
-	  <Copyright>© 2024 Wu Qi. Licensed under the MIT License. See LICENSE file for details.</Copyright>
-	  <PackageProjectUrl>https://github.com/Vico-wu/EasyDbc</PackageProjectUrl>
-	  <PackageIcon></PackageIcon>
-	  <PackageReadmeFile>README.zh.md</PackageReadmeFile>
-	  <PackageTags>V1.0.6</PackageTags>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>
+			net5.0-windows;
+			net6.0-windows;
+			net7.0-windows;
+			net8.0-windows;
+			net9.0-windows;
+			
+			netcoreapp3.1;
+			
+			net461;
+			net462;
+			
+			net47;
+			net471;
+			net472;
+			
+			net48;
+			net481;
+			
+			netstandard2.0;
+			
+			net5.0;
+			net6.0;
+			net7.0;
+			net8.0;
+			net9.0;
+		</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Authors>Wu Qi</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<OutputType>Library</OutputType>
+		<Version>1.0.7</Version>
+		<PackageId>EasyDbc</PackageId>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>
+			DBC Generation.
+			DBC File Parsing.
+			DBC Files Merge.
+			DBC export to excel.
+			Excel export to DBC.
+		</Description>
+		<RepositoryUrl>https://github.com/Vico-wu/EasyDbc</RepositoryUrl>
+		<Title>EasyDbc</Title>
+		<Copyright>© 2024 Wu Qi. Licensed under the MIT License. See LICENSE file for details.</Copyright>
+		<PackageProjectUrl>https://github.com/Vico-wu/EasyDbc</PackageProjectUrl>
+		<PackageIcon></PackageIcon>
+		<PackageReadmeFile>README.zh.md</PackageReadmeFile>
+		<PackageTags>V1.0.7</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.7.3" />
-  </ItemGroup>
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>EasyDbc.Test</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>EasyDbc.Benchmark</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\README.zh.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Assets\EASYDBC.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="EasyUDE" Version="1.0.0" />
+		<PackageReference Include="NPOI" Version="2.7.3" />
+	</ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>EasyDbc.Test</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>EasyDbc.Benchmark</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\README.zh.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Assets\EASYDBC.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 </Project>

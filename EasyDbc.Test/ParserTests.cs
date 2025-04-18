@@ -1,5 +1,6 @@
 using EasyDbc.Models;
 using EasyDbc.Parsers;
+using EasyUDE;
 
 namespace EasyDbc.Test
 {
@@ -546,6 +547,25 @@ ENVVAR_DATA_ EnvVarName3: 5;";
             Assert.That(floatSignal.ValueType, Is.EqualTo(DbcValueType.IEEEFloat)); // Set with a property
 
             // Should check the extended multiplexing stuff once implemented
+        }
+        [Test]
+        public void TestDbcEncodingGB18030()
+        {           
+            string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+            string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+            Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+           
+            Assert.That(File.Exists(outputFilePath), Is.True);
+        }
+        [Test]
+        public void TestDbcEncodingUTF8()
+        {
+            string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_GB2312.dbc";
+            string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_UTF8.dbc";
+
+            Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.UTF_8);
+
+            Assert.That(File.Exists(outputFilePath), Is.True);
         }
     }
 }

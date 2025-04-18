@@ -361,6 +361,47 @@ if(message.IsMultiplexed())
 	// ...
 }
 ```
+
+### DBC-Datei-Kodierungskonvertierung
+Für die Konvertierung von GB2312 wird der neueste Standard GB18030 empfohlen, den Notepad++ präzise erkennen kann. Dieser Standard ist abwärtskompatibel mit GB2312.
+Die derzeit unterstützten Transkodierungsformate sind wie folgt:
+
+    ASCII,
+    UTF_8,          // Unicode-Transformationformat (8-Bit)
+    UTF_16LE,       // Unicode-Transformationformat (16-Bit, Little Endian)
+    UTF_16BE,       // Unicode-Transformationformat (16-Bit, Big Endian)
+    UTF_32BE,       // Unicode-Transformationformat (32-Bit, Big Endian)
+    UTF_32LE,       // Unicode-Transformationformat (32-Bit, Little Endian)
+    windows_1251,   // Kyrillische Zeichen (Windows)
+    windows_1252,   // Westeuropäische Zeichen (Windows)
+    windows_1253,   // Griechische Zeichen (Windows)
+    windows_1255,   // Hebräische Zeichen (Windows)
+    Big5,          // Traditionelles Chinesisch
+    EUC_KR,        // Koreanisch (Extended Unix Code)
+    EUC_JP,        // Japanisch (Extended Unix Code)
+    ISO_2022_JP,   // Japanisch (ISO-Standard)
+    ISO_2022_CN,   // Chinesisch (ISO-Standard)
+    ISO_2022_KR,   // Koreanisch (ISO-Standard)
+    HZ_GB_2312,    // Chinesisch (GB2312 in HZ-Kodierung)
+    Shift_JIS,     // Japanisch (Shift JIS)
+    x_mac_cyrillic,// Kyrillisch (Mac OS)
+    KOI8_R,        // Kyrillisch (KOI8-R)
+    IBM855,        // Kyrillisch (IBM)
+    IBM866,        // Kyrillisch (alternative IBM-Kodierung)
+    ISO_8859_2,    // Mitteleuropäische Zeichen
+    ISO_8859_5,    // Kyrillische Zeichen
+    ISO_8859_7,    // Griechische Zeichen
+    ISO_8859_8,    // Hebräische Zeichen
+    GBK,           // Chinesisch (erweiterter GB2312)
+    GB2312,        // Vereinfachtes Chinesisch
+    GB18030        // Aktueller chinesischer Nationalstandard
+
+```cs
+string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+```
+
 ---
 # Beitrag
 

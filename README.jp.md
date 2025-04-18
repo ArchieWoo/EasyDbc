@@ -362,6 +362,47 @@ if(message.IsMultiplexed())
 	// ...
 }
 ```
+
+### DBCファイルのエンコーディング変換
+GB2312からの変換には、最新規格のGB18030をお勧めします。Notepad++で正確に認識でき、GB2312との下位互換性があります。
+現在サポートされている変換エンコーディング形式は以下の通りです:
+
+
+    ASCII,
+    UTF_8,          // Unicode変換形式 (8ビット)
+    UTF_16LE,       // Unicode変換形式 (16ビット, リトルエンディアン)
+    UTF_16BE,       // Unicode変換形式 (16ビット, ビッグエンディアン)
+    UTF_32BE,       // Unicode変換形式 (32ビット, ビッグエンディアン)
+    UTF_32LE,       // Unicode変換形式 (32ビット, リトルエンディアン)
+    windows_1251,   // キリル文字 (Windows)
+    windows_1252,   // 西ヨーロッパ言語 (Windows)
+    windows_1253,   // ギリシャ文字 (Windows)
+    windows_1255,   // ヘブライ文字 (Windows)
+    Big5,          // 繁体字中国語
+    EUC_KR,        // 韓国語 (拡張Unixコード)
+    EUC_JP,        // 日本語 (拡張Unixコード)
+    ISO_2022_JP,   // 日本語 (ISO標準)
+    ISO_2022_CN,   // 中国語 (ISO標準)
+    ISO_2022_KR,   // 韓国語 (ISO標準)
+    HZ_GB_2312,    // 中国語 (HZエンコーディングのGB2312)
+    Shift_JIS,     // 日本語 (シフトJIS)
+    x_mac_cyrillic,// キリル文字 (Mac OS)
+    KOI8_R,        // キリル文字 (KOI8-R)
+    IBM855,        // キリル文字 (IBM)
+    IBM866,        // キリル文字 (代替IBMエンコーディング)
+    ISO_8859_2,    // 中央ヨーロッパ言語
+    ISO_8859_5,    // キリル文字
+    ISO_8859_7,    // ギリシャ文字
+    ISO_8859_8,    // ヘブライ文字
+    GBK,           // 中国語 (拡張GB2312)
+    GB2312,        // 簡体字中国語
+    GB18030        // 現行中国国家標準
+
+```cs
+string sourceFilePath = @"..\..\..\..\DbcFiles\SampleDbc_UTF8.dbc";
+string outputFilePath = @"..\..\..\..\DbcFiles\OutputDbc_GB2312.dbc";
+Parser.ConvertEncodingFromPath(sourceFilePath, outputFilePath, TargetEncoding.GB18030);
+
 ---
 # 貢献
 

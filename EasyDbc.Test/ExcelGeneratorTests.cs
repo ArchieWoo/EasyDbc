@@ -73,7 +73,16 @@ namespace EasyDbc.Test
             excelGenerator.UpdateColumnConfig(DictionaryColumnKey.MessageName, 1);
             Assert.That(excelGenerator.CheckColumnIndexConfiction(out List<int> confictionIndexList), Is.True);
         }
-
+        [Test]
+        public void ExcelParsingWithEncodingTest()
+        {
+            string path = @"..\..\..\..\DbcFiles\SampleDbc_GB2312.dbc";
+            string outputPath = @"..\..\..\..\DbcFiles\Generated_SampleDbc_GB2312.xlsx";
+            var dbc = Parser.ParseFromPath(path);
+            ExcelGenerator excelGenerator = new ExcelGenerator();
+            excelGenerator.WriteToFile(dbc, outputPath);
+            Assert.That(File.Exists(outputPath), Is.True);
+        }
 
     }
 }
