@@ -35,7 +35,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<OutputType>Library</OutputType>
-		<Version>1.0.7</Version>
+		<Version>1.0.9</Version>
 		<PackageId>EasyDbc</PackageId>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>
@@ -51,7 +51,7 @@
 		<PackageProjectUrl>https://github.com/Vico-wu/EasyDbc</PackageProjectUrl>
 		<PackageIcon></PackageIcon>
 		<PackageReadmeFile>README.zh.md</PackageReadmeFile>
-		<PackageTags>V1.0.7</PackageTags>
+		<PackageTags>V1.0.9</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

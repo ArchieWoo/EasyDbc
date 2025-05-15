@@ -13,46 +13,62 @@ namespace EasyDbc.Generators
             var allMessages = new List<Message>();
             var allEnvironmentVariables = new List<EnvironmentVariable>();
             var allGlobalProperties = new List<CustomProperty>();
+            if (dbcs.Count == 0)
+            {
+                return retVal;
+            }
             foreach (Dbc dbc in dbcs)
             {
-
-                foreach (var node in dbc.Nodes)
+                if (dbc?.Nodes?.Count() > 0)
                 {
-                    if (!allNodes.Any(n => n.Name == node.Name))
+                    foreach (var node in dbc.Nodes)
                     {
-                        allNodes.Add(node);
+                        if (!allNodes.Any(n => n.Name == node.Name))
+                        {
+                            allNodes.Add(node);
+                        }
                     }
                 }
 
-                foreach (var message in dbc.Messages)
+                if (dbc?.Messages?.Count() > 0)
                 {
-                    if (!allMessages.Any(m => m.Name == message.Name))
+                    foreach (var message in dbc.Messages)
                     {
-                        allMessages.Add(message);
+                        if (!allMessages.Any(m => m.Name == message.Name))
+                        {
+                            allMessages.Add(message);
+                        }
                     }
                 }
 
-                foreach (var envVar in dbc.EnvironmentVariables)
+                if(dbc?.EnvironmentVariables?.Count() > 0)
                 {
-                    if (!allEnvironmentVariables.Any(e => e.Name == envVar.Name))
+                    foreach (var envVar in dbc.EnvironmentVariables)
                     {
-                        allEnvironmentVariables.Add(envVar);
+                        if (!allEnvironmentVariables.Any(e => e.Name == envVar.Name))
+                        {
+                            allEnvironmentVariables.Add(envVar);
+                        }
                     }
                 }
 
-                foreach (var globalProp in dbc.GlobalProperties)
+                if(dbc?.GlobalProperties?.Count() > 0)
                 {
+                    foreach (var globalProp in dbc.GlobalProperties)
+                    {
 
-                    if (!allGlobalProperties.Any(g => g.CustomPropertyDefinition == globalProp.CustomPropertyDefinition))
-                    {
-                        allGlobalProperties.Add(globalProp);
-                    }
-                    else
-                    {
-                        var existingProperty = allGlobalProperties.First(g => g.CustomPropertyDefinition == globalProp.CustomPropertyDefinition);
-                        // existingProperty.SetCustomPropertyValueFromDefault(); 
+                        if (!allGlobalProperties.Any(g => g.CustomPropertyDefinition == globalProp.CustomPropertyDefinition))
+                        {
+                            allGlobalProperties.Add(globalProp);
+                        }
+                        else
+                        {
+                            var existingProperty = allGlobalProperties.First(g => g.CustomPropertyDefinition == globalProp.CustomPropertyDefinition);
+                            // existingProperty.SetCustomPropertyValueFromDefault(); 
+                        }
                     }
                 }
+
 
                 dbcOutput = new Dbc(allNodes, allMessages, allEnvironmentVariables, allGlobalProperties);
                 if (dbcOutput?.Messages?.Count() > 0)
