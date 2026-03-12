@@ -2,12 +2,18 @@
   
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
     <RootNamespace>EasyDbc.Demo</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ImplicitUsings>enable</ImplicitUsings>
+    <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
+    <ApplicationIcon>Assets\EASYDBC_256x256.ico</ApplicationIcon>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Content Include="Assets\EASYDBC_256x256.ico" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
@@ -37,6 +43,10 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\EASYDBC.png">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
 </Project>

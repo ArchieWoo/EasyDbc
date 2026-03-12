@@ -16,11 +16,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace EasyDbc.Demo;
 
-// For more information about application lifecycle events see https://docs.microsoft.com/dotnet/framework/wpf/app-development/application-management-overview
-
-// WPF UI elements use language en-US by default.
-// If you need to support other cultures make sure you add converters and review dates and numbers in your UI to ensure everything adapts correctly.
-// Tracking issue for improving this is https://github.com/dotnet/wpf/issues/1946
 public partial class App : Application
 {
     private IHost _host;
@@ -35,13 +30,14 @@ public partial class App : Application
 
     private async void OnStartup(object sender, StartupEventArgs e)
     {
-        var appLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        var appLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
+        string basePath = AppContext.BaseDirectory; // 单文件下这个仍然有效
 
         // For more information about .NET generic host see  https://docs.microsoft.com/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.0
         _host = Host.CreateDefaultBuilder(e.Args)
                 .ConfigureAppConfiguration(c =>
                 {
-                    c.SetBasePath(appLocation);
+                    c.SetBasePath(basePath);
                 })
                 .ConfigureServices(ConfigureServices)
                 .Build();
