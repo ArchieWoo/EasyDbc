@@ -7,6 +7,7 @@ using EasyDbc.Observers;
 using EasyDbc.Parsers;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace EasyDbc.Demo.ViewModels;
 
@@ -24,6 +26,30 @@ public class MainViewModel : ObservableObject
     {
     }
     private Dbc _mergedDbc = null;
+    private readonly Stack<DeletedMessageEntry> _deletedMessages = new();
+    private static readonly Brush[] DuplicateIdPalette = new[]
+    {
+        new SolidColorBrush(Color.FromRgb(239, 83, 80)),
+        new SolidColorBrush(Color.FromRgb(229, 57, 53)),
+        new SolidColorBrush(Color.FromRgb(216, 27, 96)),
+        new SolidColorBrush(Color.FromRgb(194, 24, 91)),
+        new SolidColorBrush(Color.FromRgb(142, 36, 170)),
+        new SolidColorBrush(Color.FromRgb(123, 31, 162)),
+        new SolidColorBrush(Color.FromRgb(106, 27, 154)),
+        new SolidColorBrush(Color.FromRgb(94, 53, 177)),
+        new SolidColorBrush(Color.FromRgb(74, 20, 140)),
+        new SolidColorBrush(Color.FromRgb(171, 71, 188)),
+        new SolidColorBrush(Color.FromRgb(149, 117, 205)),
+        new SolidColorBrush(Color.FromRgb(186, 104, 200)),
+        new SolidColorBrush(Color.FromRgb(255, 82, 82)),
+        new SolidColorBrush(Color.FromRgb(255, 23, 68)),
+        new SolidColorBrush(Color.FromRgb(213, 0, 0)),
+        new SolidColorBrush(Color.FromRgb(198, 40, 40)),
+        new SolidColorBrush(Color.FromRgb(183, 28, 28)),
+        new SolidColorBrush(Color.FromRgb(128, 0, 128)),
+        new SolidColorBrush(Color.FromRgb(147, 0, 211)),
+        new SolidColorBrush(Color.FromRgb(199, 21, 133)),
+    };
     //Input File Path
     private string _filePath1;
     public string FilePath1
@@ -75,10 +101,14 @@ public class MainViewModel : ObservableObject
         get => _messageItems;
         set
         {
+            var previousItems = _messageItems;
             if (SetProperty(ref _messageItems, value))
             {
+                DetachMessageItemHandlers(previousItems);
                 MessageItemsView = CollectionViewSource.GetDefaultView(_messageItems);
                 ApplyMessageSorting();
+                AttachMessageItemHandlers(_messageItems);
+                UpdateMessageHighlighting();
             }
         }
     }
@@ -147,6 +177,12 @@ public class MainViewModel : ObservableObject
     public string ToggleExpandText => AreAllMessagesExpanded ? "Collapse All" : "Expand All";
 
     public string ToggleExpandIcon => AreAllMessagesExpanded ? "▾" : "▸";
+
+    private RelayCommand<EditableMessageViewModel> _deleteMessageCommand;
+    public ICommand DeleteMessageCommand => _deleteMessageCommand ??= new RelayCommand<EditableMessageViewModel>(OnDeleteMessage, CanDeleteMessage);
+
+    private RelayCommand _undoDeleteMessageCommand;
+    public ICommand UndoDeleteMessageCommand => _undoDeleteMessageCommand ??= new RelayCommand(OnUndoDeleteMessage, CanUndoDeleteMessage);
 
     private ICommand _openFileCommand;
     public ICommand OpenFileCommand => _openFileCommand ??= new RelayCommand<string>(OnOpenFileCommand);
@@ -464,6 +500,9 @@ public class MainViewModel : ObservableObject
         {
             messageItem.IsExpanded = false;
         }
+        _deletedMessages.Clear();
+        _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
+        UpdateMessageHighlighting();
     }
 
     private void ApplyMessageSorting()
@@ -478,10 +517,193 @@ public class MainViewModel : ObservableObject
         MessageItemsView.Refresh();
     }
 
+    private void AttachMessageItemHandlers(ObservableCollection<EditableMessageViewModel> items)
+    {
+        if (items == null)
+        {
+            return;
+        }
+
+        items.CollectionChanged += OnMessageItemsCollectionChanged;
+        foreach (var item in items)
+        {
+            item.PropertyChanged += OnMessageItemPropertyChanged;
+        }
+    }
+
+    private void DetachMessageItemHandlers(ObservableCollection<EditableMessageViewModel> items)
+    {
+        if (items == null)
+        {
+            return;
+        }
+
+        items.CollectionChanged -= OnMessageItemsCollectionChanged;
+        foreach (var item in items)
+        {
+            item.PropertyChanged -= OnMessageItemPropertyChanged;
+        }
+    }
+
+    private void OnMessageItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems != null)
+        {
+            foreach (EditableMessageViewModel item in e.OldItems)
+            {
+                item.PropertyChanged -= OnMessageItemPropertyChanged;
+            }
+        }
+
+        if (e.NewItems != null)
+        {
+            foreach (EditableMessageViewModel item in e.NewItems)
+            {
+                item.PropertyChanged += OnMessageItemPropertyChanged;
+            }
+        }
+
+        UpdateMessageHighlighting();
+    }
+
+    private void OnMessageItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(EditableMessageViewModel.Id) || e.PropertyName == nameof(EditableMessageViewModel.Name))
+        {
+            UpdateMessageHighlighting();
+        }
+    }
+
+    private void UpdateMessageHighlighting()
+    {
+        if (MessageItems == null || MessageItems.Count == 0)
+        {
+            return;
+        }
+
+        var duplicateIdGroups = MessageItems
+            .GroupBy(item => item.MessageIdValue)
+            .Where(group => group.Count() > 1)
+            .OrderBy(group => group.Key)
+            .ToList();
+
+        var duplicateIdPaletteMap = new Dictionary<uint, Brush>();
+        for (var i = 0; i < duplicateIdGroups.Count; i++)
+        {
+            var colorIndex = i % DuplicateIdPalette.Length;
+            duplicateIdPaletteMap[duplicateIdGroups[i].Key] = DuplicateIdPalette[colorIndex];
+        }
+
+        var nameCounts = MessageItems
+            .GroupBy(item => item.MessageNameValue ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var item in MessageItems)
+        {
+            if (duplicateIdPaletteMap.TryGetValue(item.MessageIdValue, out var duplicateBrush))
+            {
+                item.HasDuplicateId = true;
+                item.DuplicateIdBrush = duplicateBrush;
+            }
+            else
+            {
+                item.HasDuplicateId = false;
+                item.DuplicateIdBrush = Brushes.Transparent;
+            }
+            var nameKey = item.MessageNameValue ?? string.Empty;
+            item.HasDuplicateName = nameCounts.TryGetValue(nameKey, out var nameCount) && nameCount > 1;
+            item.UpdateHasNoSignals();
+        }
+    }
+
+    private bool CanDeleteMessage(EditableMessageViewModel message)
+    {
+        return message != null;
+    }
+
+    private void OnDeleteMessage(EditableMessageViewModel message)
+    {
+        if (message == null)
+        {
+            return;
+        }
+
+        var viewIndex = MessageItems.IndexOf(message);
+        if (viewIndex < 0)
+        {
+            return;
+        }
+
+        var messageList = _mergedDbc?.Messages as IList<Message>;
+        var modelIndex = messageList?.IndexOf(message.SourceMessage) ?? -1;
+
+        MessageItems.RemoveAt(viewIndex);
+        if (messageList != null && modelIndex >= 0)
+        {
+            messageList.RemoveAt(modelIndex);
+        }
+
+        _deletedMessages.Push(new DeletedMessageEntry(message, viewIndex, modelIndex));
+        _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
+        UpdateMessageHighlighting();
+        MessageItemsView?.Refresh();
+    }
+
+    private bool CanUndoDeleteMessage()
+    {
+        return _deletedMessages.Count > 0;
+    }
+
+    private void OnUndoDeleteMessage()
+    {
+        if (_deletedMessages.Count == 0)
+        {
+            return;
+        }
+
+        var entry = _deletedMessages.Pop();
+        var insertIndex = entry.ViewIndex >= 0 && entry.ViewIndex <= MessageItems.Count
+            ? entry.ViewIndex
+            : MessageItems.Count;
+
+        MessageItems.Insert(insertIndex, entry.MessageItem);
+
+        var messageList = _mergedDbc?.Messages as IList<Message>;
+        if (messageList != null)
+        {
+            var modelIndex = entry.ModelIndex >= 0 && entry.ModelIndex <= messageList.Count
+                ? entry.ModelIndex
+                : messageList.Count;
+            messageList.Insert(modelIndex, entry.MessageItem.SourceMessage);
+        }
+
+        _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
+        UpdateMessageHighlighting();
+        MessageItemsView?.Refresh();
+    }
+
+    private sealed class DeletedMessageEntry
+    {
+        public DeletedMessageEntry(EditableMessageViewModel messageItem, int viewIndex, int modelIndex)
+        {
+            MessageItem = messageItem;
+            ViewIndex = viewIndex;
+            ModelIndex = modelIndex;
+        }
+
+        public EditableMessageViewModel MessageItem { get; }
+        public int ViewIndex { get; }
+        public int ModelIndex { get; }
+    }
+
     public class EditableMessageViewModel : ObservableObject
     {
         private readonly Message _message;
         private readonly SilentFailureObserver _silentFailureObserver = new();
+        private bool _hasDuplicateId;
+        private bool _hasDuplicateName;
+        private bool _hasNoSignals;
+        private Brush _duplicateIdBrush = Brushes.Transparent;
 
         public EditableMessageViewModel(Message message)
         {
@@ -489,6 +711,8 @@ public class MainViewModel : ObservableObject
             Signals = new ObservableCollection<EditableSignalViewModel>(_message.Signals.Select(signal => new EditableSignalViewModel(signal)));
             _message.CycleTime(out _cycleTime);
             _isExpanded = false;
+            Signals.CollectionChanged += OnSignalsCollectionChanged;
+            UpdateHasNoSignals();
         }
 
         private bool _isExpanded;
@@ -578,6 +802,36 @@ public class MainViewModel : ObservableObject
 
         public ObservableCollection<EditableSignalViewModel> Signals { get; }
 
+        public Message SourceMessage => _message;
+
+        public uint MessageIdValue => _message.ID;
+
+        public string MessageNameValue => _message.Name;
+
+        public bool HasDuplicateId
+        {
+            get => _hasDuplicateId;
+            set => SetProperty(ref _hasDuplicateId, value);
+        }
+
+        public Brush DuplicateIdBrush
+        {
+            get => _duplicateIdBrush;
+            set => SetProperty(ref _duplicateIdBrush, value);
+        }
+
+        public bool HasDuplicateName
+        {
+            get => _hasDuplicateName;
+            set => SetProperty(ref _hasDuplicateName, value);
+        }
+
+        public bool HasNoSignals
+        {
+            get => _hasNoSignals;
+            set => SetProperty(ref _hasNoSignals, value);
+        }
+
         private void SetCycleTime(int value)
         {
             if (_message.CustomProperties.TryGetValue("GenMsgCycleTime", out var cycleProperty) && cycleProperty.IntegerCustomProperty != null)
@@ -625,6 +879,16 @@ public class MainViewModel : ObservableObject
             }
 
             return uint.TryParse(value, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out id);
+        }
+
+        private void OnSignalsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateHasNoSignals();
+        }
+
+        public void UpdateHasNoSignals()
+        {
+            HasNoSignals = Signals.Count == 0;
         }
     }
 

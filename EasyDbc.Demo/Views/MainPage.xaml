@@ -11,6 +11,12 @@
     d:DesignWidth="1280"
     Style="{DynamicResource MahApps.Styles.Page}"
     mc:Ignorable="d">
+    <Page.InputBindings>
+        <KeyBinding
+            Key="Z"
+            Modifiers="Control"
+            Command="{Binding UndoDeleteMessageCommand}" />
+    </Page.InputBindings>
     <Page.Resources>
         <ObjectDataProvider
             x:Key="DbcValueTypeValues"
@@ -259,8 +265,32 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Expander Margin="0,0,0,6" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                                    <Expander.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem
+                                                                Header="Delete Message"
+                                                                Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                CommandParameter="{Binding}" />
+                                                        </ContextMenu>
+                                                    </Expander.ContextMenu>
                                                     <Expander.Header>
                                                         <Grid>
+                                                            <Grid.Style>
+                                                                <Style TargetType="Grid">
+                                                                    <Setter Property="Background" Value="Transparent" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding HasNoSignals}" Value="True">
+                                                                            <Setter Property="Background" Value="#FFD0D0D0" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding HasDuplicateName}" Value="True">
+                                                                            <Setter Property="Background" Value="#FFFFF59D" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding HasDuplicateId}" Value="True">
+                                                                            <Setter Property="Background" Value="{Binding DuplicateIdBrush}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Grid.Style>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="130" />
                                                                 <ColumnDefinition Width="170" />
@@ -276,7 +306,18 @@
                                                             <TextBox
                                                                 Grid.Column="1"
                                                                 Margin="2"
-                                                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                                                                <TextBox.Style>
+                                                                    <Style TargetType="TextBox">
+                                                                        <Setter Property="FontWeight" Value="Normal" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding HasDuplicateName}" Value="True">
+                                                                                <Setter Property="FontWeight" Value="Bold" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBox.Style>
+                                                            </TextBox>
                                                             <TextBox
                                                                 Grid.Column="2"
                                                                 Margin="2"
