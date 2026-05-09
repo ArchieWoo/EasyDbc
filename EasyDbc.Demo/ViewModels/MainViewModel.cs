@@ -13,6 +13,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Input;
@@ -22,11 +23,16 @@ namespace EasyDbc.Demo.ViewModels;
 
 public class MainViewModel : ObservableObject
 {
+    private const int MaxNameLength = 32;
     public MainViewModel()
     {
+        LoadSettings();
     }
     private Dbc _mergedDbc = null;
     private readonly Stack<DeletedMessageEntry> _deletedMessages = new();
+    private readonly AppSettings _settings = new();
+    private bool _suppressSettingsSave;
+    private const string SettingsFileName = "EasyDbcSettings.json";
     private static readonly Brush[] DuplicateIdPalette = new[]
     {
         new SolidColorBrush(Color.FromRgb(239, 83, 80)),
@@ -55,32 +61,62 @@ public class MainViewModel : ObservableObject
     public string FilePath1
     {
         get { return _filePath1; }
-        set { SetProperty(ref _filePath1, value); }
+        set
+        {
+            if (SetProperty(ref _filePath1, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     private string _filePath2;
     public string FilePath2
     {
         get { return _filePath2; }
-        set { SetProperty(ref _filePath2, value); }
+        set
+        {
+            if (SetProperty(ref _filePath2, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     private string _filePath3;
     public string FilePath3
     {
         get { return _filePath3; }
-        set { SetProperty(ref _filePath3, value); }
+        set
+        {
+            if (SetProperty(ref _filePath3, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     //Output File Path
     private string _outputDbcFilePath;
     public string OutputDbcFilePath
     {
         get { return _outputDbcFilePath; }
-        set { SetProperty(ref _outputDbcFilePath, value); }
+        set
+        {
+            if (SetProperty(ref _outputDbcFilePath, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     private string _outputExcelFilePath;
     public string OutputExcelFilePath
     {
         get { return _outputExcelFilePath; }
-        set { SetProperty(ref _outputExcelFilePath, value); }
+        set
+        {
+            if (SetProperty(ref _outputExcelFilePath, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     private string _nodes = string.Empty;
     public string Nodes
@@ -184,6 +220,9 @@ public class MainViewModel : ObservableObject
     private RelayCommand _undoDeleteMessageCommand;
     public ICommand UndoDeleteMessageCommand => _undoDeleteMessageCommand ??= new RelayCommand(OnUndoDeleteMessage, CanUndoDeleteMessage);
 
+    private RelayCommand<EditableSignalViewModel> _deleteSignalCommand;
+    public ICommand DeleteSignalCommand => _deleteSignalCommand ??= new RelayCommand<EditableSignalViewModel>(OnDeleteSignal, CanDeleteSignal);
+
     private ICommand _openFileCommand;
     public ICommand OpenFileCommand => _openFileCommand ??= new RelayCommand<string>(OnOpenFileCommand);
 
@@ -191,13 +230,14 @@ public class MainViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(obj))
             return;
+        var initialDirectory = GetInitialOpenDirectory(obj);
         var openFileDialog = new OpenFileDialog
         {
             Title = "Please select a excel or dbc file",
             Filter = "Supported Files|*.dbc;*.xls;*.xlsx",
             FilterIndex = 1,
             Multiselect = false,
-            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            InitialDirectory = initialDirectory,
             RestoreDirectory = true,
         };
         if (openFileDialog.ShowDialog() == true)
@@ -217,6 +257,8 @@ public class MainViewModel : ObservableObject
                 {
                     FilePath3 = openFileDialog.FileName;
                 }
+                _settings.LastOpenDirectory = Path.GetDirectoryName(openFileDialog.FileName);
+                SaveSettings();
             }
             else
             {
@@ -273,7 +315,7 @@ public class MainViewModel : ObservableObject
             FileName = $"Generated{fileFormat}File_{timeString}",
             Filter = fileter,
             FilterIndex = 1,
-            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            InitialDirectory = GetInitialSaveDirectory(obj),
             RestoreDirectory = true,
         };
         if (saveFileDialog.ShowDialog() == true)
@@ -292,6 +334,8 @@ public class MainViewModel : ObservableObject
             {
                 MessageBox.Show("Invalid file extesion", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            _settings.LastSaveDirectory = Path.GetDirectoryName(saveFileDialog.FileName);
+            SaveSettings();
         }
     }
 
@@ -636,6 +680,12 @@ public class MainViewModel : ObservableObject
 
         var messageList = _mergedDbc?.Messages as IList<Message>;
         var modelIndex = messageList?.IndexOf(message.SourceMessage) ?? -1;
+        var detachedSignals = message.SourceMessage.Signals.ToList();
+        foreach (var signal in detachedSignals)
+        {
+            signal.Parent = null;
+        }
+        message.SourceMessage.Signals.Clear();
 
         MessageItems.RemoveAt(viewIndex);
         if (messageList != null && modelIndex >= 0)
@@ -643,7 +693,7 @@ public class MainViewModel : ObservableObject
             messageList.RemoveAt(modelIndex);
         }
 
-        _deletedMessages.Push(new DeletedMessageEntry(message, viewIndex, modelIndex));
+        _deletedMessages.Push(new DeletedMessageEntry(message, viewIndex, modelIndex, detachedSignals));
         _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
         UpdateMessageHighlighting();
         MessageItemsView?.Refresh();
@@ -652,6 +702,34 @@ public class MainViewModel : ObservableObject
     private bool CanUndoDeleteMessage()
     {
         return _deletedMessages.Count > 0;
+    }
+
+    private bool CanDeleteSignal(EditableSignalViewModel signal)
+    {
+        return signal?.ParentMessage != null;
+    }
+
+    private void OnDeleteSignal(EditableSignalViewModel signal)
+    {
+        if (signal?.ParentMessage == null)
+        {
+            return;
+        }
+
+        var parentMessage = signal.ParentMessage;
+        var sourceMessage = parentMessage.SourceMessage;
+        var sourceSignal = signal.SourceSignal;
+
+        if (sourceSignal != null)
+        {
+            sourceSignal.Parent = null;
+        }
+
+        parentMessage.Signals.Remove(signal);
+        sourceMessage?.Signals.Remove(sourceSignal);
+        parentMessage.UpdateHasNoSignals();
+        UpdateMessageHighlighting();
+        MessageItemsView?.Refresh();
     }
 
     private void OnUndoDeleteMessage()
@@ -677,6 +755,15 @@ public class MainViewModel : ObservableObject
             messageList.Insert(modelIndex, entry.MessageItem.SourceMessage);
         }
 
+        if (entry.DetachedSignals.Count > 0)
+        {
+            foreach (var signal in entry.DetachedSignals)
+            {
+                signal.Parent = entry.MessageItem.SourceMessage;
+            }
+            entry.MessageItem.SourceMessage.Signals.AddRange(entry.DetachedSignals);
+        }
+
         _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
         UpdateMessageHighlighting();
         MessageItemsView?.Refresh();
@@ -684,16 +771,18 @@ public class MainViewModel : ObservableObject
 
     private sealed class DeletedMessageEntry
     {
-        public DeletedMessageEntry(EditableMessageViewModel messageItem, int viewIndex, int modelIndex)
+        public DeletedMessageEntry(EditableMessageViewModel messageItem, int viewIndex, int modelIndex, List<Signal> detachedSignals)
         {
             MessageItem = messageItem;
             ViewIndex = viewIndex;
             ModelIndex = modelIndex;
+            DetachedSignals = detachedSignals ?? new List<Signal>();
         }
 
         public EditableMessageViewModel MessageItem { get; }
         public int ViewIndex { get; }
         public int ModelIndex { get; }
+        public List<Signal> DetachedSignals { get; }
     }
 
     public class EditableMessageViewModel : ObservableObject
@@ -704,15 +793,23 @@ public class MainViewModel : ObservableObject
         private bool _hasDuplicateName;
         private bool _hasNoSignals;
         private Brush _duplicateIdBrush = Brushes.Transparent;
+        private bool _isSelected;
+        private bool _hasSignalNameTooLong;
+        private string _signalNameLengthTooltip;
 
         public EditableMessageViewModel(Message message)
         {
             _message = message;
-            Signals = new ObservableCollection<EditableSignalViewModel>(_message.Signals.Select(signal => new EditableSignalViewModel(signal)));
+            Signals = new ObservableCollection<EditableSignalViewModel>(_message.Signals.Select(signal => new EditableSignalViewModel(signal, this)));
             _message.CycleTime(out _cycleTime);
             _isExpanded = false;
             Signals.CollectionChanged += OnSignalsCollectionChanged;
+            foreach (var signal in Signals)
+            {
+                signal.PropertyChanged += OnSignalPropertyChanged;
+            }
             UpdateHasNoSignals();
+            UpdateSignalNameLengthState();
         }
 
         private bool _isExpanded;
@@ -808,6 +905,8 @@ public class MainViewModel : ObservableObject
 
         public string MessageNameValue => _message.Name;
 
+        public bool IsMessageItem => true;
+
         public bool HasDuplicateId
         {
             get => _hasDuplicateId;
@@ -830,6 +929,24 @@ public class MainViewModel : ObservableObject
         {
             get => _hasNoSignals;
             set => SetProperty(ref _hasNoSignals, value);
+        }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
+        }
+
+        public bool HasSignalNameTooLong
+        {
+            get => _hasSignalNameTooLong;
+            set => SetProperty(ref _hasSignalNameTooLong, value);
+        }
+
+        public string SignalNameLengthTooltip
+        {
+            get => _signalNameLengthTooltip;
+            set => SetProperty(ref _signalNameLengthTooltip, value);
         }
 
         private void SetCycleTime(int value)
@@ -883,12 +1000,51 @@ public class MainViewModel : ObservableObject
 
         private void OnSignalsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.OldItems != null)
+            {
+                foreach (EditableSignalViewModel signal in e.OldItems)
+                {
+                    signal.PropertyChanged -= OnSignalPropertyChanged;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (EditableSignalViewModel signal in e.NewItems)
+                {
+                    signal.PropertyChanged += OnSignalPropertyChanged;
+                }
+            }
+
             UpdateHasNoSignals();
+            UpdateSignalNameLengthState();
+        }
+
+        private void OnSignalPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(EditableSignalViewModel.IsNameTooLong) || e.PropertyName == nameof(EditableSignalViewModel.Name))
+            {
+                UpdateSignalNameLengthState();
+            }
         }
 
         public void UpdateHasNoSignals()
         {
             HasNoSignals = Signals.Count == 0;
+        }
+
+        private void UpdateSignalNameLengthState()
+        {
+            var tooLongSignals = Signals
+                .Where(signal => signal.IsNameTooLong)
+                .Select(signal => signal.Name)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .ToList();
+
+            HasSignalNameTooLong = tooLongSignals.Count > 0;
+            SignalNameLengthTooltip = HasSignalNameTooLong
+                ? $"Signal names exceed {MaxNameLength} characters: {string.Join(", ", tooLongSignals.Take(3))}"
+                : string.Empty;
         }
     }
 
@@ -896,12 +1052,23 @@ public class MainViewModel : ObservableObject
     {
         private readonly Signal _signal;
         private string _valueTable;
+        private readonly EditableMessageViewModel _parentMessage;
+        private bool _isNameTooLong;
+        private string _nameLengthTooltip;
 
-        public EditableSignalViewModel(Signal signal)
+        public EditableSignalViewModel(Signal signal, EditableMessageViewModel parentMessage)
         {
             _signal = signal;
+            _parentMessage = parentMessage;
             _valueTable = string.Join(Environment.NewLine, _signal.ValueTableMap.Select(kvp => $"{kvp.Key}\"{kvp.Value}\""));
+            UpdateNameLengthState();
         }
+
+        public bool IsMessageItem => false;
+
+        public EditableMessageViewModel ParentMessage => _parentMessage;
+
+        public Signal SourceSignal => _signal;
 
         public string Name
         {
@@ -912,8 +1079,29 @@ public class MainViewModel : ObservableObject
                 {
                     _signal.Name = value;
                     OnPropertyChanged();
+                    UpdateNameLengthState();
                 }
             }
+        }
+        public bool IsNameTooLong
+        {
+            get => _isNameTooLong;
+            set => SetProperty(ref _isNameTooLong, value);
+        }
+
+        public string NameLengthTooltip
+        {
+            get => _nameLengthTooltip;
+            set => SetProperty(ref _nameLengthTooltip, value);
+        }
+
+        private void UpdateNameLengthState()
+        {
+            var name = _signal.Name ?? string.Empty;
+            IsNameTooLong = name.Length > MaxNameLength;
+            NameLengthTooltip = IsNameTooLong
+                ? $"Signal name exceeds {MaxNameLength} characters: {name}"
+                : string.Empty;
         }
 
         public ushort StartBit
@@ -1052,5 +1240,144 @@ public class MainViewModel : ObservableObject
                 }
             }
         }
+    }
+
+    private void LoadSettings()
+    {
+        var settingsPath = GetSettingsPath();
+        if (!File.Exists(settingsPath))
+        {
+            return;
+        }
+
+        try
+        {
+            var json = File.ReadAllText(settingsPath);
+            var loaded = JsonSerializer.Deserialize<AppSettings>(json);
+            if (loaded == null)
+            {
+                return;
+            }
+
+            _suppressSettingsSave = true;
+            _settings.LastOpenDirectory = loaded.LastOpenDirectory;
+            _settings.LastSaveDirectory = loaded.LastSaveDirectory;
+            FilePath1 = loaded.FilePath1;
+            FilePath2 = loaded.FilePath2;
+            FilePath3 = loaded.FilePath3;
+            OutputDbcFilePath = loaded.OutputDbcFilePath;
+            OutputExcelFilePath = loaded.OutputExcelFilePath;
+        }
+        catch
+        {
+            // Ignore settings load failures.
+        }
+        finally
+        {
+            _suppressSettingsSave = false;
+        }
+    }
+
+    private void SaveSettings()
+    {
+        if (_suppressSettingsSave)
+        {
+            return;
+        }
+
+        _settings.FilePath1 = FilePath1;
+        _settings.FilePath2 = FilePath2;
+        _settings.FilePath3 = FilePath3;
+        _settings.OutputDbcFilePath = OutputDbcFilePath;
+        _settings.OutputExcelFilePath = OutputExcelFilePath;
+
+        var settingsPath = GetSettingsPath();
+        try
+        {
+            var json = JsonSerializer.Serialize(_settings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(settingsPath, json);
+        }
+        catch
+        {
+            // Ignore settings save failures.
+        }
+    }
+
+    private static string GetSettingsPath()
+    {
+        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SettingsFileName);
+    }
+
+    private string GetInitialOpenDirectory(string target)
+    {
+        var candidate = target?.ToLowerInvariant() switch
+        {
+            "filepath1" => FilePath1,
+            "filepath2" => FilePath2,
+            "filepath3" => FilePath3,
+            _ => null
+        };
+
+        if (!string.IsNullOrWhiteSpace(candidate))
+        {
+            if (File.Exists(candidate))
+            {
+                return Path.GetDirectoryName(candidate);
+            }
+
+            if (Directory.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_settings.LastOpenDirectory) && Directory.Exists(_settings.LastOpenDirectory))
+        {
+            return _settings.LastOpenDirectory;
+        }
+
+        return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    }
+
+    private string GetInitialSaveDirectory(string target)
+    {
+        var candidate = target?.ToLowerInvariant() switch
+        {
+            "outputdbcfilepath" => OutputDbcFilePath,
+            "outputexcelfilepath" => OutputExcelFilePath,
+            _ => null
+        };
+
+        if (!string.IsNullOrWhiteSpace(candidate))
+        {
+            if (File.Exists(candidate))
+            {
+                return Path.GetDirectoryName(candidate);
+            }
+
+            var directory = Path.GetDirectoryName(candidate);
+            if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
+            {
+                return directory;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_settings.LastSaveDirectory) && Directory.Exists(_settings.LastSaveDirectory))
+        {
+            return _settings.LastSaveDirectory;
+        }
+
+        return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    }
+
+    private sealed class AppSettings
+    {
+        public string FilePath1 { get; set; }
+        public string FilePath2 { get; set; }
+        public string FilePath3 { get; set; }
+        public string OutputDbcFilePath { get; set; }
+        public string OutputExcelFilePath { get; set; }
+        public string LastOpenDirectory { get; set; }
+        public string LastSaveDirectory { get; set; }
     }
 }

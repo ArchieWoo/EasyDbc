@@ -7,6 +7,7 @@
     xmlns:model="clr-namespace:EasyDbc.Models;assembly=EasyDbc"
     xmlns:properties="clr-namespace:EasyDbc.Demo.Properties"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:vm="clr-namespace:EasyDbc.Demo.ViewModels"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     Style="{DynamicResource MahApps.Styles.Page}"
@@ -26,6 +27,275 @@
                 <x:Type TypeName="model:DbcValueType" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <ContextMenu x:Key="MessageContextMenu">
+            <MenuItem
+                Header="Cut"
+                Command="ApplicationCommands.Cut"
+                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem
+                Header="Copy"
+                Command="ApplicationCommands.Copy"
+                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem
+                Header="Paste"
+                Command="ApplicationCommands.Paste"
+                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem
+                Header="Delete Message"
+                Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                CommandParameter="{Binding}" />
+        </ContextMenu>
+        <ContextMenu x:Key="SignalContextMenu">
+            <MenuItem
+                Header="Cut"
+                Command="ApplicationCommands.Cut"
+                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem
+                Header="Copy"
+                Command="ApplicationCommands.Copy"
+                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem
+                Header="Paste"
+                Command="ApplicationCommands.Paste"
+                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem
+                Header="Delete Signal"
+                Command="{Binding DataContext.DeleteSignalCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                CommandParameter="{Binding}" />
+        </ContextMenu>
+        <HierarchicalDataTemplate
+            DataType="{x:Type vm:MainViewModel+EditableMessageViewModel}"
+            ItemsSource="{Binding Signals}">
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasNoSignals}" Value="True">
+                                <Setter Property="Background" Value="#FFD0D0D0" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding HasDuplicateName}" Value="True">
+                                <Setter Property="Background" Value="#FFFFF59D" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding HasDuplicateId}" Value="True">
+                                <Setter Property="Background" Value="{Binding DuplicateIdBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Viewbox
+                    Grid.Column="0"
+                    Width="12"
+                    Height="12"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ToolTip="{Binding SignalNameLengthTooltip}"
+                    ToolTipService.InitialShowDelay="100">
+                    <Viewbox.Style>
+                        <Style TargetType="Viewbox">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasSignalNameTooLong}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Viewbox.Style>
+                    <Path
+                        Fill="#FFD32F2F"
+                        Stroke="#FFD32F2F"
+                        StrokeThickness="1"
+                        Data="M12,2 L22,20 H2 Z M12,7 L12,13 M12,16 L12,18" />
+                </Viewbox>
+                <TextBox
+                    Grid.Column="1"
+                    Margin="2"
+                    ContextMenu="{StaticResource MessageContextMenu}"
+                    Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="2"
+                    Margin="2"
+                    ContextMenu="{StaticResource MessageContextMenu}"
+                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="FontWeight" Value="Normal" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasDuplicateName}" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <TextBox
+                    Grid.Column="3"
+                    Margin="2"
+                    ContextMenu="{StaticResource MessageContextMenu}"
+                    Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox
+                    Grid.Column="4"
+                    Margin="2"
+                    ContextMenu="{StaticResource MessageContextMenu}"
+                    SelectedValue="{Binding IsExtendedId}"
+                    SelectedValuePath="Tag">
+                    <ComboBoxItem Content="Standard">
+                        <ComboBoxItem.Tag>
+                            <sys:Boolean>False</sys:Boolean>
+                        </ComboBoxItem.Tag>
+                    </ComboBoxItem>
+                    <ComboBoxItem Content="Extended">
+                        <ComboBoxItem.Tag>
+                            <sys:Boolean>True</sys:Boolean>
+                        </ComboBoxItem.Tag>
+                    </ComboBoxItem>
+                </ComboBox>
+                <TextBox
+                    Grid.Column="5"
+                    Margin="2"
+                    ContextMenu="{StaticResource MessageContextMenu}"
+                    Text="{Binding Dlc, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="6"
+                    Margin="2"
+                    ContextMenu="{StaticResource MessageContextMenu}"
+                    Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </HierarchicalDataTemplate>
+        <DataTemplate DataType="{x:Type vm:MainViewModel+EditableSignalViewModel}">
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsNameTooLong}" Value="True">
+                                <Setter Property="Background" Value="#FFFFE0E0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Viewbox
+                    Grid.Column="0"
+                    Width="12"
+                    Height="12"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ToolTip="{Binding NameLengthTooltip}"
+                    ToolTipService.InitialShowDelay="100">
+                    <Viewbox.Style>
+                        <Style TargetType="Viewbox">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNameTooLong}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Viewbox.Style>
+                    <Path
+                        Fill="#FFD32F2F"
+                        Stroke="#FFD32F2F"
+                        StrokeThickness="1"
+                        Data="M12,2 L22,20 H2 Z M12,7 L12,13 M12,16 L12,18" />
+                </Viewbox>
+                <TextBox
+                    Grid.Column="1"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="2"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding StartBit, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="3"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Length, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox
+                    Grid.Column="4"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    SelectedItem="{Binding ByteOrder, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.ItemsSource>
+                        <x:Array Type="{x:Type sys:String}">
+                            <sys:String>Intel</sys:String>
+                            <sys:String>Motorola</sys:String>
+                        </x:Array>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+                <ComboBox
+                    Grid.Column="5"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    ItemsSource="{Binding Source={StaticResource DbcValueTypeValues}}"
+                    SelectedItem="{Binding ValueType, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="6"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Factor, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="7"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="8"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Minimum, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="9"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Maximum, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="10"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Unit, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="11"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding ValueTable, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="12"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -228,6 +498,7 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <StackPanel
@@ -260,131 +531,58 @@
                                     </Button>
                                 </StackPanel>
 
-                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl ItemsSource="{Binding MessageItemsView}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Expander Margin="0,0,0,6" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
-                                                    <Expander.ContextMenu>
-                                                        <ContextMenu>
-                                                            <MenuItem
-                                                                Header="Delete Message"
-                                                                Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                                CommandParameter="{Binding}" />
-                                                        </ContextMenu>
-                                                    </Expander.ContextMenu>
-                                                    <Expander.Header>
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Background" Value="Transparent" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding HasNoSignals}" Value="True">
-                                                                            <Setter Property="Background" Value="#FFD0D0D0" />
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding HasDuplicateName}" Value="True">
-                                                                            <Setter Property="Background" Value="#FFFFF59D" />
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding HasDuplicateId}" Value="True">
-                                                                            <Setter Property="Background" Value="{Binding DuplicateIdBrush}" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="130" />
-                                                                <ColumnDefinition Width="170" />
-                                                                <ColumnDefinition Width="80" />
-                                                                <ColumnDefinition Width="100" />
-                                                                <ColumnDefinition Width="80" />
-                                                                <ColumnDefinition Width="*" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <TextBox
-                                                                Grid.Column="0"
-                                                                Margin="2"
-                                                                Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
-                                                            <TextBox
-                                                                Grid.Column="1"
-                                                                Margin="2"
-                                                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}">
-                                                                <TextBox.Style>
-                                                                    <Style TargetType="TextBox">
-                                                                        <Setter Property="FontWeight" Value="Normal" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding HasDuplicateName}" Value="True">
-                                                                                <Setter Property="FontWeight" Value="Bold" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBox.Style>
-                                                            </TextBox>
-                                                            <TextBox
-                                                                Grid.Column="2"
-                                                                Margin="2"
-                                                                Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" />
-                                                            <ComboBox
-                                                                Grid.Column="3"
-                                                                Margin="2"
-                                                                SelectedValue="{Binding IsExtendedId}"
-                                                                SelectedValuePath="Tag">
-                                                                <ComboBoxItem Content="Standard">
-                                                                    <ComboBoxItem.Tag>
-                                                                        <sys:Boolean>False</sys:Boolean>
-                                                                    </ComboBoxItem.Tag>
-                                                                </ComboBoxItem>
-                                                                <ComboBoxItem Content="Extended">
-                                                                    <ComboBoxItem.Tag>
-                                                                        <sys:Boolean>True</sys:Boolean>
-                                                                    </ComboBoxItem.Tag>
-                                                                </ComboBoxItem>
-                                                            </ComboBox>
-                                                            <TextBox
-                                                                Grid.Column="4"
-                                                                Margin="2"
-                                                                Text="{Binding Dlc, UpdateSourceTrigger=PropertyChanged}" />
-                                                            <TextBox
-                                                                Grid.Column="5"
-                                                                Margin="2"
-                                                                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </Grid>
-                                                    </Expander.Header>
-
-                                                    <DataGrid
-                                                        Margin="0,6,0,0"
-                                                        AutoGenerateColumns="False"
-                                                        CanUserAddRows="False"
-                                                        CanUserDeleteRows="False"
-                                                        ItemsSource="{Binding Signals}">
-                                                        <DataGrid.Columns>
-                                                            <DataGridTextColumn Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Header="Signal Name" />
-                                                            <DataGridTextColumn Binding="{Binding StartBit, UpdateSourceTrigger=PropertyChanged}" Header="Start Bit" />
-                                                            <DataGridTextColumn Binding="{Binding Length, UpdateSourceTrigger=PropertyChanged}" Header="Length" />
-                                                            <DataGridComboBoxColumn Header="Byte Order" SelectedItemBinding="{Binding ByteOrder, UpdateSourceTrigger=PropertyChanged}">
-                                                                <DataGridComboBoxColumn.ItemsSource>
-                                                                    <x:Array Type="{x:Type sys:String}">
-                                                                        <sys:String>Intel</sys:String>
-                                                                        <sys:String>Motorola</sys:String>
-                                                                    </x:Array>
-                                                                </DataGridComboBoxColumn.ItemsSource>
-                                                            </DataGridComboBoxColumn>
-                                                            <DataGridComboBoxColumn
-                                                                Header="Data Type"
-                                                                ItemsSource="{Binding Source={StaticResource DbcValueTypeValues}}"
-                                                                SelectedItemBinding="{Binding ValueType, UpdateSourceTrigger=PropertyChanged}" />
-                                                            <DataGridTextColumn Binding="{Binding Factor, UpdateSourceTrigger=PropertyChanged}" Header="Factor" />
-                                                            <DataGridTextColumn Binding="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" Header="Offset" />
-                                                            <DataGridTextColumn Binding="{Binding Minimum, UpdateSourceTrigger=PropertyChanged}" Header="Minimum" />
-                                                            <DataGridTextColumn Binding="{Binding Maximum, UpdateSourceTrigger=PropertyChanged}" Header="Maximum" />
-                                                            <DataGridTextColumn Binding="{Binding Unit, UpdateSourceTrigger=PropertyChanged}" Header="Unit" />
-                                                            <DataGridTextColumn Binding="{Binding ValueTable, UpdateSourceTrigger=PropertyChanged}" Header="ValueTable" />
-                                                            <DataGridTextColumn Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" Header="Comment" />
-                                                        </DataGrid.Columns>
-                                                    </DataGrid>
-                                                </Expander>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
+                                <Grid Grid.Row="1" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24" />
+                                        <ColumnDefinition Width="160" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" FontWeight="Bold" Text="!" />
+                                    <TextBlock Grid.Column="1" FontWeight="Bold" Text="Signal Name" />
+                                    <TextBlock Grid.Column="2" FontWeight="Bold" Text="Start Bit" />
+                                    <TextBlock Grid.Column="3" FontWeight="Bold" Text="Length" />
+                                    <TextBlock Grid.Column="4" FontWeight="Bold" Text="Byte Order" />
+                                    <TextBlock Grid.Column="5" FontWeight="Bold" Text="Data Type" />
+                                    <TextBlock Grid.Column="6" FontWeight="Bold" Text="Factor" />
+                                    <TextBlock Grid.Column="7" FontWeight="Bold" Text="Offset" />
+                                    <TextBlock Grid.Column="8" FontWeight="Bold" Text="Minimum" />
+                                    <TextBlock Grid.Column="9" FontWeight="Bold" Text="Maximum" />
+                                    <TextBlock Grid.Column="10" FontWeight="Bold" Text="Unit" />
+                                    <TextBlock Grid.Column="11" FontWeight="Bold" Text="ValueTable" />
+                                    <TextBlock Grid.Column="12" FontWeight="Bold" Text="Comment" />
+                                </Grid>
+                                <TreeView
+                                    x:Name="MessageTreeView"
+                                    Grid.Row="2"
+                                    BorderThickness="0"
+                                    ItemsSource="{Binding MessageItemsView}"
+                                    ScrollViewer.CanContentScroll="True"
+                                    VirtualizingStackPanel.IsVirtualizing="True"
+                                    VirtualizingStackPanel.VirtualizationMode="Recycling">
+                                    <TreeView.ItemContainerStyle>
+                                        <Style TargetType="TreeViewItem">
+                                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+                                            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMessageItem}" Value="True">
+                                                    <Setter Property="ContextMenu" Value="{StaticResource MessageContextMenu}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TreeView.ItemContainerStyle>
+                                </TreeView>
                             </Grid>
                         </Expander>
                     </Grid>
