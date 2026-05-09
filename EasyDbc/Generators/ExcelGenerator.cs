@@ -297,8 +297,8 @@ namespace EasyDbc.Generators
             ? new XSSFDataValidationHelper((XSSFSheet)_sheet)
             : (IDataValidationHelper)new HSSFDataValidationHelper((HSSFSheet)_sheet);
 
-            string[] dropdownOptions_MessageSendType = new string[] { "cyclic", "cyclicIfActive", "noMsgSendType" };
-            string[] dropdownOptions_FrameType = new string[] { "StandardCAN", "ExtendedCAN", "J1939PG" };
+            string[] dropdownOptions_MessageSendType = new string[] { "cyclic", "spontaneous", "not-used", "cyclicAndSpontaneous", "cyclicIfActive", "noMsgSendType" };
+            string[] dropdownOptions_FrameType = new string[] { "StandardCAN", "ExtendedCAN", "J1939PG", "StandardCAN_FD", "ExtendedCAN_FD" };
             string[] dropdownOptions_SignalDataType = new string[] { "Unsigned", "Signed", "IEEEFloat", "IEEEDouble" };
             string[] dropdownOptions_ByteOrder = new string[] { "Intel", "Motorola" };
 
