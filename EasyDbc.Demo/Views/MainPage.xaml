@@ -4,11 +4,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:EasyDbc.Models;assembly=EasyDbc"
     xmlns:properties="clr-namespace:EasyDbc.Demo.Properties"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     Style="{DynamicResource MahApps.Styles.Page}"
     mc:Ignorable="d">
+    <Page.Resources>
+        <ObjectDataProvider
+            x:Key="DbcValueTypeValues"
+            MethodName="GetValues"
+            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="model:DbcValueType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
@@ -189,10 +201,11 @@
                             Orientation="Horizontal">
                             <Button Command="{Binding ParsingMessageCommand}" Content="Refresh" />
                         </StackPanel>
-                        <GroupBox
+                        <Expander
                             Grid.Row="1"
                             Margin="{StaticResource SmallTopMargin}"
-                            Header="Nodes">
+                            Header="Nodes"
+                            IsExpanded="True">
                             <ScrollViewer>
                                 <TextBlock
                                     Margin="{StaticResource SmallLeftTopRightBottomMargin}"
@@ -201,33 +214,138 @@
                                     FontWeight="Bold"
                                     Text="{Binding Nodes}" />
                             </ScrollViewer>
-                        </GroupBox>
-                        <GroupBox Grid.Row="2" Header="Messages">
-                            <ListView ItemsSource="{Binding Messages.DefaultView}">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn DisplayMemberBinding="{Binding [ID]}" Header="ID" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Message Name]}" Header="Message Name" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [DLC]}" Header="DLC" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Transmitter]}" Header="Transmitter" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [CycleTime]}" Header="CycleTime" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Signal Name]}" Header="Signal Name" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Start Bit]}" Header="Start Bit" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Length]}" Header="Length" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Byte Order]}" Header="Byte Order" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Data Type]}" Header="Data Type" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Factor]}" Header="Factor" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Offset]}" Header="Offset" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Minimum]}" Header="Minimum" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Maximum]}" Header="Maximum" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Initial Value]}" Header="Initial Value" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Unit]}" Header="Unit" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [ValueTable]}" Header="ValueTable" />
-                                        <GridViewColumn DisplayMemberBinding="{Binding [Comment]}" Header="Comment" />
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                        </GroupBox>
+                        </Expander>
+                        <Expander
+                            Grid.Row="2"
+                            Header="Messages"
+                            IsExpanded="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Margin="0,0,0,8"
+                                    Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Sort By:" />
+                                    <ComboBox
+                                        Width="120"
+                                        Margin="8,0,0,0"
+                                        ItemsSource="{Binding MessageSortFields}"
+                                        SelectedItem="{Binding SelectedMessageSortField, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding ToggleMessageSortDirectionCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Margin="0,0,4,0" Text="{Binding SortDirectionIcon}" />
+                                            <TextBlock Text="{Binding SortDirectionText}" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding ToggleExpandAllMessagesCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Margin="0,0,4,0" Text="{Binding ToggleExpandIcon}" />
+                                            <TextBlock Text="{Binding ToggleExpandText}" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding MessageItemsView}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Expander Margin="0,0,0,6" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                                    <Expander.Header>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="130" />
+                                                                <ColumnDefinition Width="170" />
+                                                                <ColumnDefinition Width="80" />
+                                                                <ColumnDefinition Width="100" />
+                                                                <ColumnDefinition Width="80" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox
+                                                                Grid.Column="0"
+                                                                Margin="2"
+                                                                Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
+                                                            <TextBox
+                                                                Grid.Column="1"
+                                                                Margin="2"
+                                                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                                            <TextBox
+                                                                Grid.Column="2"
+                                                                Margin="2"
+                                                                Text="{Binding CycleTime, UpdateSourceTrigger=PropertyChanged}" />
+                                                            <ComboBox
+                                                                Grid.Column="3"
+                                                                Margin="2"
+                                                                SelectedValue="{Binding IsExtendedId}"
+                                                                SelectedValuePath="Tag">
+                                                                <ComboBoxItem Content="Standard">
+                                                                    <ComboBoxItem.Tag>
+                                                                        <sys:Boolean>False</sys:Boolean>
+                                                                    </ComboBoxItem.Tag>
+                                                                </ComboBoxItem>
+                                                                <ComboBoxItem Content="Extended">
+                                                                    <ComboBoxItem.Tag>
+                                                                        <sys:Boolean>True</sys:Boolean>
+                                                                    </ComboBoxItem.Tag>
+                                                                </ComboBoxItem>
+                                                            </ComboBox>
+                                                            <TextBox
+                                                                Grid.Column="4"
+                                                                Margin="2"
+                                                                Text="{Binding Dlc, UpdateSourceTrigger=PropertyChanged}" />
+                                                            <TextBox
+                                                                Grid.Column="5"
+                                                                Margin="2"
+                                                                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </Grid>
+                                                    </Expander.Header>
+
+                                                    <DataGrid
+                                                        Margin="0,6,0,0"
+                                                        AutoGenerateColumns="False"
+                                                        CanUserAddRows="False"
+                                                        CanUserDeleteRows="False"
+                                                        ItemsSource="{Binding Signals}">
+                                                        <DataGrid.Columns>
+                                                            <DataGridTextColumn Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Header="Signal Name" />
+                                                            <DataGridTextColumn Binding="{Binding StartBit, UpdateSourceTrigger=PropertyChanged}" Header="Start Bit" />
+                                                            <DataGridTextColumn Binding="{Binding Length, UpdateSourceTrigger=PropertyChanged}" Header="Length" />
+                                                            <DataGridComboBoxColumn Header="Byte Order" SelectedItemBinding="{Binding ByteOrder, UpdateSourceTrigger=PropertyChanged}">
+                                                                <DataGridComboBoxColumn.ItemsSource>
+                                                                    <x:Array Type="{x:Type sys:String}">
+                                                                        <sys:String>Intel</sys:String>
+                                                                        <sys:String>Motorola</sys:String>
+                                                                    </x:Array>
+                                                                </DataGridComboBoxColumn.ItemsSource>
+                                                            </DataGridComboBoxColumn>
+                                                            <DataGridComboBoxColumn
+                                                                Header="Data Type"
+                                                                ItemsSource="{Binding Source={StaticResource DbcValueTypeValues}}"
+                                                                SelectedItemBinding="{Binding ValueType, UpdateSourceTrigger=PropertyChanged}" />
+                                                            <DataGridTextColumn Binding="{Binding Factor, UpdateSourceTrigger=PropertyChanged}" Header="Factor" />
+                                                            <DataGridTextColumn Binding="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" Header="Offset" />
+                                                            <DataGridTextColumn Binding="{Binding Minimum, UpdateSourceTrigger=PropertyChanged}" Header="Minimum" />
+                                                            <DataGridTextColumn Binding="{Binding Maximum, UpdateSourceTrigger=PropertyChanged}" Header="Maximum" />
+                                                            <DataGridTextColumn Binding="{Binding Unit, UpdateSourceTrigger=PropertyChanged}" Header="Unit" />
+                                                            <DataGridTextColumn Binding="{Binding ValueTable, UpdateSourceTrigger=PropertyChanged}" Header="ValueTable" />
+                                                            <DataGridTextColumn Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" Header="Comment" />
+                                                        </DataGrid.Columns>
+                                                    </DataGrid>
+                                                </Expander>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Grid>
+                        </Expander>
                     </Grid>
                 </GroupBox>
             </Grid>

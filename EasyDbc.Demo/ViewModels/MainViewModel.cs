@@ -3,11 +3,16 @@ using CommunityToolkit.Mvvm.Input;
 using EasyDbc.Generators;
 using EasyDbc.Helpers;
 using EasyDbc.Models;
+using EasyDbc.Observers;
 using EasyDbc.Parsers;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Windows.Data;
 using System.Windows;
 using System.Windows.Input;
 
@@ -64,6 +69,85 @@ public class MainViewModel : ObservableObject
         set { SetProperty(ref _messages, value); }
     }
 
+    private ObservableCollection<EditableMessageViewModel> _messageItems = new();
+    public ObservableCollection<EditableMessageViewModel> MessageItems
+    {
+        get => _messageItems;
+        set
+        {
+            if (SetProperty(ref _messageItems, value))
+            {
+                MessageItemsView = CollectionViewSource.GetDefaultView(_messageItems);
+                ApplyMessageSorting();
+            }
+        }
+    }
+
+    private ICollectionView _messageItemsView;
+    public ICollectionView MessageItemsView
+    {
+        get => _messageItemsView;
+        set => SetProperty(ref _messageItemsView, value);
+    }
+
+    public IReadOnlyList<string> MessageSortFields { get; } = new List<string>
+    {
+        "ID",
+        "Name",
+        "CycleTime",
+        "DLC"
+    };
+
+    private string _selectedMessageSortField = "ID";
+    public string SelectedMessageSortField
+    {
+        get => _selectedMessageSortField;
+        set
+        {
+            if (SetProperty(ref _selectedMessageSortField, value))
+            {
+                ApplyMessageSorting();
+            }
+        }
+    }
+
+    private bool _isMessageSortDescending;
+    public bool IsMessageSortDescending
+    {
+        get => _isMessageSortDescending;
+        set
+        {
+            if (SetProperty(ref _isMessageSortDescending, value))
+            {
+                OnPropertyChanged(nameof(SortDirectionText));
+                OnPropertyChanged(nameof(SortDirectionIcon));
+                ApplyMessageSorting();
+            }
+        }
+    }
+
+    public string SortDirectionText => IsMessageSortDescending ? "Descending" : "Ascending";
+
+    public string SortDirectionIcon => IsMessageSortDescending ? "↓" : "↑";
+
+    private bool _areAllMessagesExpanded;
+    public bool AreAllMessagesExpanded
+    {
+        get => _areAllMessagesExpanded;
+        set
+        {
+            if (SetProperty(ref _areAllMessagesExpanded, value))
+            {
+                OnPropertyChanged(nameof(ToggleExpandText));
+                OnPropertyChanged(nameof(ToggleExpandIcon));
+            }
+        }
+    }
+
+    public string ToggleExpandText => AreAllMessagesExpanded ? "Collapse All" : "Expand All";
+
+    public string ToggleExpandIcon => AreAllMessagesExpanded ? "▾" : "▸";
+
     private ICommand _openFileCommand;
     public ICommand OpenFileCommand => _openFileCommand ??= new RelayCommand<string>(OnOpenFileCommand);
 
@@ -74,8 +158,8 @@ public class MainViewModel : ObservableObject
         var openFileDialog = new OpenFileDialog
         {
             Title = "Please select a excel or dbc file",
-            Filter = "All Files|*.*|Excel Files|*.xls;*.xlsx|dbc Files|*.dbc",
-            FilterIndex = 2,
+            Filter = "Supported Files|*.dbc;*.xls;*.xlsx",
+            FilterIndex = 1,
             Multiselect = false,
             InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             RestoreDirectory = true,
@@ -139,12 +223,12 @@ public class MainViewModel : ObservableObject
         // Add file extension fileter 
         if (obj == "OutputDbcFilePath")
         {
-            fileter = "All Files|*.*|dbc Files|*.dbc";
+            fileter = "dbc Files|*.dbc";
             fileFormat = "_DBC";
         }
         else if (obj == "OutputExcelFilePath")
         {
-            fileter = "All Files|*.*|Excel Files 2003|*.xls|Excel Files|*.xlsx";
+            fileter = "Excel Files|*.xls;*.xlsx";
             fileFormat = "_Excel";
         }
         var saveFileDialog = new SaveFileDialog
@@ -152,7 +236,7 @@ public class MainViewModel : ObservableObject
             Title = "Please select path for save",
             FileName = $"Generated{fileFormat}File_{timeString}",
             Filter = fileter,
-            FilterIndex = 3,
+            FilterIndex = 1,
             InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             RestoreDirectory = true,
         };
@@ -180,7 +264,13 @@ public class MainViewModel : ObservableObject
 
     private void OnGenerateFileCommand(string obj)
     {
-        if (ParsingAndMergeDbc())
+        if (_mergedDbc == null && !ParsingAndMergeDbc())
+        {
+            MessageBox.Show("The DBC parsing result is empty. Please confirm if the file is correct. ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        if (_mergedDbc != null)
         {
             if (obj == "dbc")
             {
@@ -209,17 +299,35 @@ public class MainViewModel : ObservableObject
 
             }
         }
-        else
-        {
-            MessageBox.Show("The DBC parsing result is empty. Please confirm if the file is correct. ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
     }
     private ICommand _parsingMessageCommand;
     public ICommand ParsingMessageCommand => _parsingMessageCommand ??= new RelayCommand(OnParsingMessagesCommand);
 
+    private ICommand _toggleMessageSortDirectionCommand;
+    public ICommand ToggleMessageSortDirectionCommand => _toggleMessageSortDirectionCommand ??= new RelayCommand(OnToggleMessageSortDirectionCommand);
+
+    private ICommand _toggleExpandAllMessagesCommand;
+    public ICommand ToggleExpandAllMessagesCommand => _toggleExpandAllMessagesCommand ??= new RelayCommand(OnToggleExpandAllMessagesCommand);
+
     private void OnParsingMessagesCommand()
     {
         ParsingAndMergeDbc();
+    }
+
+    private void OnToggleMessageSortDirectionCommand()
+    {
+        IsMessageSortDescending = !IsMessageSortDescending;
+    }
+
+    private void OnToggleExpandAllMessagesCommand()
+    {
+        var shouldExpand = !AreAllMessagesExpanded;
+        foreach (var messageItem in MessageItems)
+        {
+            messageItem.IsExpanded = shouldExpand;
+        }
+
+        AreAllMessagesExpanded = shouldExpand;
     }
 
     private bool IsValidExtension(string fileName)
@@ -235,6 +343,7 @@ public class MainViewModel : ObservableObject
     {
         Nodes = string.Empty;
         Messages.Clear();
+        MessageItems.Clear();
         _mergedDbc = null;
         List<Dbc> parsingResult = new List<Dbc>();
         if (!string.IsNullOrEmpty(FilePath1))
@@ -266,6 +375,7 @@ public class MainViewModel : ObservableObject
                 Nodes = string.Join("; ", _mergedDbc.Nodes.Select(node => node.Name));
             }
             GenerateDataTable(_mergedDbc);
+            GenerateEditableMessages(_mergedDbc);
         }
         return result;
     }
@@ -344,5 +454,339 @@ public class MainViewModel : ObservableObject
             }
         }
         Messages = _messages;
+    }
+
+    private void GenerateEditableMessages(Dbc dbc)
+    {
+        MessageItems = new ObservableCollection<EditableMessageViewModel>(dbc.Messages.Select(message => new EditableMessageViewModel(message)));
+        AreAllMessagesExpanded = false;
+        foreach (var messageItem in MessageItems)
+        {
+            messageItem.IsExpanded = false;
+        }
+    }
+
+    private void ApplyMessageSorting()
+    {
+        if (MessageItemsView == null)
+        {
+            return;
+        }
+
+        MessageItemsView.SortDescriptions.Clear();
+        MessageItemsView.SortDescriptions.Add(new SortDescription(SelectedMessageSortField, IsMessageSortDescending ? ListSortDirection.Descending : ListSortDirection.Ascending));
+        MessageItemsView.Refresh();
+    }
+
+    public class EditableMessageViewModel : ObservableObject
+    {
+        private readonly Message _message;
+        private readonly SilentFailureObserver _silentFailureObserver = new();
+
+        public EditableMessageViewModel(Message message)
+        {
+            _message = message;
+            Signals = new ObservableCollection<EditableSignalViewModel>(_message.Signals.Select(signal => new EditableSignalViewModel(signal)));
+            _message.CycleTime(out _cycleTime);
+            _isExpanded = false;
+        }
+
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => SetProperty(ref _isExpanded, value);
+        }
+
+        public string Id
+        {
+            get => $"0x{_message.ID:X}";
+            set
+            {
+                if (TryParseId(value, out var id))
+                {
+                    _message.ID = id;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string Name
+        {
+            get => _message.Name;
+            set
+            {
+                if (_message.Name != value)
+                {
+                    _message.Name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _cycleTime;
+        public int CycleTime
+        {
+            get => _cycleTime;
+            set
+            {
+                if (SetProperty(ref _cycleTime, value))
+                {
+                    SetCycleTime(value);
+                }
+            }
+        }
+
+        public bool IsExtendedId
+        {
+            get => _message.IsExtID;
+            set
+            {
+                if (_message.IsExtID != value)
+                {
+                    _message.IsExtID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ushort Dlc
+        {
+            get => _message.DLC;
+            set
+            {
+                if (_message.DLC != value)
+                {
+                    _message.DLC = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string Description
+        {
+            get => _message.Comment;
+            set
+            {
+                if (_message.Comment != value)
+                {
+                    _message.Comment = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<EditableSignalViewModel> Signals { get; }
+
+        private void SetCycleTime(int value)
+        {
+            if (_message.CustomProperties.TryGetValue("GenMsgCycleTime", out var cycleProperty) && cycleProperty.IntegerCustomProperty != null)
+            {
+                cycleProperty.IntegerCustomProperty.Value = value;
+                return;
+            }
+
+            var definition = new CustomPropertyDefinition(_silentFailureObserver)
+            {
+                Name = "GenMsgCycleTime",
+                DataType = CustomPropertyDataType.Integer,
+                IntegerCustomProperty = new NumericCustomPropertyDefinition<int>
+                {
+                    Minimum = 0,
+                    Maximum = 0,
+                    Default = value
+                }
+            };
+
+            var property = new CustomProperty(definition)
+            {
+                IntegerCustomProperty = new CustomPropertyValue<int> { Value = value }
+            };
+            _message.CustomProperties["GenMsgCycleTime"] = property;
+        }
+
+        private static bool TryParseId(string value, out uint id)
+        {
+            id = 0;
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            value = value.Trim();
+            if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                return uint.TryParse(value[2..], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out id);
+            }
+
+            if (uint.TryParse(value, out id))
+            {
+                return true;
+            }
+
+            return uint.TryParse(value, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out id);
+        }
+    }
+
+    public class EditableSignalViewModel : ObservableObject
+    {
+        private readonly Signal _signal;
+        private string _valueTable;
+
+        public EditableSignalViewModel(Signal signal)
+        {
+            _signal = signal;
+            _valueTable = string.Join(Environment.NewLine, _signal.ValueTableMap.Select(kvp => $"{kvp.Key}\"{kvp.Value}\""));
+        }
+
+        public string Name
+        {
+            get => _signal.Name;
+            set
+            {
+                if (_signal.Name != value)
+                {
+                    _signal.Name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ushort StartBit
+        {
+            get => _signal.StartBit;
+            set
+            {
+                if (_signal.StartBit != value)
+                {
+                    _signal.StartBit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ushort Length
+        {
+            get => _signal.Length;
+            set
+            {
+                if (_signal.Length != value)
+                {
+                    _signal.Length = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string ByteOrder
+        {
+            get => _signal.ByteOrder == 1 ? "Intel" : "Motorola";
+            set
+            {
+                var byteOrder = string.Equals(value, "Motorola", StringComparison.OrdinalIgnoreCase) ? (byte)0 : (byte)1;
+                if (_signal.ByteOrder != byteOrder)
+                {
+                    _signal.ByteOrder = byteOrder;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public DbcValueType ValueType
+        {
+            get => _signal.ValueType;
+            set
+            {
+                if (_signal.ValueType != value)
+                {
+                    _signal.ValueType = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public double Factor
+        {
+            get => _signal.Factor;
+            set
+            {
+                if (_signal.Factor != value)
+                {
+                    _signal.Factor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public double Offset
+        {
+            get => _signal.Offset;
+            set
+            {
+                if (_signal.Offset != value)
+                {
+                    _signal.Offset = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public double Minimum
+        {
+            get => _signal.Minimum;
+            set
+            {
+                if (_signal.Minimum != value)
+                {
+                    _signal.Minimum = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public double Maximum
+        {
+            get => _signal.Maximum;
+            set
+            {
+                if (_signal.Maximum != value)
+                {
+                    _signal.Maximum = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string Unit
+        {
+            get => _signal.Unit;
+            set
+            {
+                if (_signal.Unit != value)
+                {
+                    _signal.Unit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string ValueTable
+        {
+            get => _valueTable;
+            set => SetProperty(ref _valueTable, value);
+        }
+
+        public string Comment
+        {
+            get => _signal.Comment;
+            set
+            {
+                if (_signal.Comment != value)
+                {
+                    _signal.Comment = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
     }
 }
