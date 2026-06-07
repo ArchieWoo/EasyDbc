@@ -28,6 +28,9 @@
         InitialValue,
         Unit,
         ValueTable,
+        Multiplexing,
+        MultiplexRanges,
+        SignalGroups,
     }
     public enum WriteStatus
     {

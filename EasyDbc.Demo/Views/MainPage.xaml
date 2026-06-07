@@ -187,19 +187,22 @@
                     </Style>
                 </Grid.Style>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="24" />
-                    <ColumnDefinition Width="160" />
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="110" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="24" SharedSizeGroup="SignalWarningColumn" />
+                    <ColumnDefinition Width="160" SharedSizeGroup="SignalNameColumn" />
+                    <ColumnDefinition Width="70" SharedSizeGroup="SignalStartBitColumn" />
+                    <ColumnDefinition Width="70" SharedSizeGroup="SignalLengthColumn" />
+                    <ColumnDefinition Width="110" SharedSizeGroup="SignalByteOrderColumn" />
+                    <ColumnDefinition Width="120" SharedSizeGroup="SignalDataTypeColumn" />
+                    <ColumnDefinition Width="70" SharedSizeGroup="SignalFactorColumn" />
+                    <ColumnDefinition Width="70" SharedSizeGroup="SignalOffsetColumn" />
+                    <ColumnDefinition Width="80" SharedSizeGroup="SignalMinimumColumn" />
+                    <ColumnDefinition Width="80" SharedSizeGroup="SignalMaximumColumn" />
+                    <ColumnDefinition Width="70" SharedSizeGroup="SignalUnitColumn" />
+                    <ColumnDefinition Width="120" SharedSizeGroup="SignalValueTableColumn" />
+                    <ColumnDefinition Width="90" SharedSizeGroup="SignalMuxColumn" />
+                    <ColumnDefinition Width="160" SharedSizeGroup="SignalMuxRangesColumn" />
+                    <ColumnDefinition Width="120" SharedSizeGroup="SignalGroupsColumn" />
+                    <ColumnDefinition Width="*" SharedSizeGroup="SignalCommentColumn" />
                 </Grid.ColumnDefinitions>
                 <Viewbox
                     Grid.Column="0"
@@ -293,6 +296,21 @@
                     Grid.Column="12"
                     Margin="2"
                     ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding Multiplexing, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="13"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding MultiplexRanges, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="14"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
+                    Text="{Binding SignalGroups, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    Grid.Column="15"
+                    Margin="2"
+                    ContextMenu="{StaticResource SignalContextMenu}"
                     Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>
@@ -337,11 +355,13 @@
                                 Width="150"
                                 VerticalAlignment="Center"
                                 Text="File Path 1:" />
-                            <TextBox
+                            <ComboBox
                                 Width="300"
                                 Margin="{StaticResource SmallLeftMargin}"
                                 VerticalAlignment="Center"
-                                Text="{Binding FilePath1}" />
+                                IsEditable="True"
+                                ItemsSource="{Binding RecentInputFiles}"
+                                Text="{Binding FilePath1, UpdateSourceTrigger=PropertyChanged}" />
                             <Button
                                 Width="80"
                                 Margin="{StaticResource SmallLeftMargin}"
@@ -361,11 +381,13 @@
                                 Width="150"
                                 VerticalAlignment="Center"
                                 Text="File Path 2:" />
-                            <TextBox
+                            <ComboBox
                                 Width="300"
                                 Margin="{StaticResource SmallLeftMargin}"
                                 VerticalAlignment="Center"
-                                Text="{Binding FilePath2}" />
+                                IsEditable="True"
+                                ItemsSource="{Binding RecentInputFiles}"
+                                Text="{Binding FilePath2, UpdateSourceTrigger=PropertyChanged}" />
                             <Button
                                 Width="80"
                                 Margin="{StaticResource SmallLeftMargin}"
@@ -385,11 +407,13 @@
                                 Width="150"
                                 VerticalAlignment="Center"
                                 Text="File Path 3:" />
-                            <TextBox
+                            <ComboBox
                                 Width="300"
                                 Margin="{StaticResource SmallLeftMargin}"
                                 VerticalAlignment="Center"
-                                Text="{Binding FilePath3}" />
+                                IsEditable="True"
+                                ItemsSource="{Binding RecentInputFiles}"
+                                Text="{Binding FilePath3, UpdateSourceTrigger=PropertyChanged}" />
                             <Button
                                 Width="80"
                                 Margin="{StaticResource SmallLeftMargin}"
@@ -417,11 +441,13 @@
                                 Width="150"
                                 VerticalAlignment="Center"
                                 Text="Output Dbc File Path :" />
-                            <TextBox
+                            <ComboBox
                                 Width="300"
                                 Margin="{StaticResource SmallLeftMargin}"
                                 VerticalAlignment="Center"
-                                Text="{Binding OutputDbcFilePath}" />
+                                IsEditable="True"
+                                ItemsSource="{Binding RecentDbcOutputFiles}"
+                                Text="{Binding OutputDbcFilePath, UpdateSourceTrigger=PropertyChanged}" />
                             <Button
                                 Width="80"
                                 Margin="{StaticResource SmallLeftMargin}"
@@ -440,11 +466,13 @@
                                 Width="150"
                                 VerticalAlignment="Center"
                                 Text="Output Excel File Path :" />
-                            <TextBox
+                            <ComboBox
                                 Width="300"
                                 Margin="{StaticResource SmallLeftMargin}"
                                 VerticalAlignment="Center"
-                                Text="{Binding OutputExcelFilePath}" />
+                                IsEditable="True"
+                                ItemsSource="{Binding RecentExcelOutputFiles}"
+                                Text="{Binding OutputExcelFilePath, UpdateSourceTrigger=PropertyChanged}" />
                             <Button
                                 Width="80"
                                 Margin="{StaticResource SmallLeftMargin}"
@@ -458,6 +486,11 @@
                                 CommandParameter="excel"
                                 Content="Gen Excel" />
                         </StackPanel>
+                        <CheckBox
+                            Margin="{StaticResource SmallTopMargin}"
+                            VerticalAlignment="Center"
+                            Content="Enable SignalGroup / multiplex Excel columns"
+                            IsChecked="{Binding IncludeSignalGroupExcelColumns, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </GroupBox>
                 <!--  DBC Content  -->
@@ -476,6 +509,21 @@
                             Margin="{StaticResource SmallTopMargin}"
                             Orientation="Horizontal">
                             <Button Command="{Binding ParsingMessageCommand}" Content="Refresh" />
+                            <TextBlock
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="Processing...">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
                         <Expander
                             Grid.Row="1"
@@ -495,7 +543,7 @@
                             Grid.Row="2"
                             Header="Messages"
                             IsExpanded="True">
-                            <Grid>
+                            <Grid Grid.IsSharedSizeScope="True">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -531,21 +579,24 @@
                                     </Button>
                                 </StackPanel>
 
-                                <Grid Grid.Row="1" Margin="0,0,0,6">
+                                <Grid Grid.Row="1" Margin="38,0,0,6">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="24" />
-                                        <ColumnDefinition Width="160" />
-                                        <ColumnDefinition Width="70" />
-                                        <ColumnDefinition Width="70" />
-                                        <ColumnDefinition Width="110" />
-                                        <ColumnDefinition Width="120" />
-                                        <ColumnDefinition Width="70" />
-                                        <ColumnDefinition Width="70" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="70" />
-                                        <ColumnDefinition Width="120" />
-                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="24" SharedSizeGroup="SignalWarningColumn" />
+                                        <ColumnDefinition Width="160" SharedSizeGroup="SignalNameColumn" />
+                                        <ColumnDefinition Width="70" SharedSizeGroup="SignalStartBitColumn" />
+                                        <ColumnDefinition Width="70" SharedSizeGroup="SignalLengthColumn" />
+                                        <ColumnDefinition Width="110" SharedSizeGroup="SignalByteOrderColumn" />
+                                        <ColumnDefinition Width="120" SharedSizeGroup="SignalDataTypeColumn" />
+                                        <ColumnDefinition Width="70" SharedSizeGroup="SignalFactorColumn" />
+                                        <ColumnDefinition Width="70" SharedSizeGroup="SignalOffsetColumn" />
+                                        <ColumnDefinition Width="80" SharedSizeGroup="SignalMinimumColumn" />
+                                        <ColumnDefinition Width="80" SharedSizeGroup="SignalMaximumColumn" />
+                                        <ColumnDefinition Width="70" SharedSizeGroup="SignalUnitColumn" />
+                                        <ColumnDefinition Width="120" SharedSizeGroup="SignalValueTableColumn" />
+                                        <ColumnDefinition Width="90" SharedSizeGroup="SignalMuxColumn" />
+                                        <ColumnDefinition Width="160" SharedSizeGroup="SignalMuxRangesColumn" />
+                                        <ColumnDefinition Width="120" SharedSizeGroup="SignalGroupsColumn" />
+                                        <ColumnDefinition Width="*" SharedSizeGroup="SignalCommentColumn" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" FontWeight="Bold" Text="!" />
                                     <TextBlock Grid.Column="1" FontWeight="Bold" Text="Signal Name" />
@@ -559,7 +610,10 @@
                                     <TextBlock Grid.Column="9" FontWeight="Bold" Text="Maximum" />
                                     <TextBlock Grid.Column="10" FontWeight="Bold" Text="Unit" />
                                     <TextBlock Grid.Column="11" FontWeight="Bold" Text="ValueTable" />
-                                    <TextBlock Grid.Column="12" FontWeight="Bold" Text="Comment" />
+                                    <TextBlock Grid.Column="12" FontWeight="Bold" Text="Mux" />
+                                    <TextBlock Grid.Column="13" FontWeight="Bold" Text="Mux Ranges" />
+                                    <TextBlock Grid.Column="14" FontWeight="Bold" Text="Groups" />
+                                    <TextBlock Grid.Column="15" FontWeight="Bold" Text="Comment" />
                                 </Grid>
                                 <TreeView
                                     x:Name="MessageTreeView"
@@ -573,6 +627,7 @@
                                         <Style TargetType="TreeViewItem">
                                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
                                             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
                                             <Style.Triggers>

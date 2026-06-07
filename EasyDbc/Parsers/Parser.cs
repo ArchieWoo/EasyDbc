@@ -21,6 +21,7 @@ namespace EasyDbc.Parsers
                 new MessageLineParser(m_parseObserver),
                 new CommentLineParser(m_parseObserver),
                 new SignalLineParser(m_parseObserver),
+                new SignalGroupLineParser(m_parseObserver),
                 new SignalValueTypeLineParser(m_parseObserver),
                 new ValueTableDefinitionLineParser(m_parseObserver),
                 new ValueTableLineParser(m_parseObserver),
@@ -29,6 +30,7 @@ namespace EasyDbc.Parsers
                 new EnvironmentVariableLineParser(m_parseObserver),
                 new EnvironmentDataVariableLineParser(m_parseObserver),
                 new ExtraMessageTransmitterLineParser(m_parseObserver),
+                new SignalMultiplexValueLineParser(m_parseObserver),
                 new UnknownLineParser(m_parseObserver) // Used as a catch all 
             };
         }

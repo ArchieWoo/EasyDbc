@@ -21,6 +21,7 @@ namespace EasyDbc.Models
         public IReadOnlyDictionary<int, string> ValueTableMap { get; }
         public string Comment { get; }
         public string Multiplexing { get; }
+        public IReadOnlyList<SignalMultiplexRange> MultiplexRanges { get; }
         public IReadOnlyDictionary<string, CustomProperty> CustomProperties { get; }
 
         internal ImmutableSignal(Signal signal) 
@@ -42,6 +43,7 @@ namespace EasyDbc.Models
             ValueTableMap = signal.ValueTableMap;
             Comment = signal.Comment;
             Multiplexing = signal.Multiplexing;
+            MultiplexRanges = signal.MultiplexRanges;
             CustomProperties = signal.CustomProperties;
         }
     }
@@ -65,6 +67,7 @@ namespace EasyDbc.Models
         public IReadOnlyDictionary<int, string> ValueTableMap = new Dictionary<int, string>();
         public string Comment;
         public string Multiplexing;
+        public List<SignalMultiplexRange> MultiplexRanges = new List<SignalMultiplexRange>();
         public Message Parent;
         public readonly Dictionary<string, CustomProperty> CustomProperties = new Dictionary<string, CustomProperty>();
         public double InitialValue

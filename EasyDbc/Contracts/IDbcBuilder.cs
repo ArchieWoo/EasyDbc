@@ -10,8 +10,10 @@ namespace EasyDbc.Contracts
         void AddNode(Node node);
         void AddNodeComment(string nodeName, string comment);
         void AddSignal(Signal signal);
+        void AddSignalGroup(uint messageId, SignalGroup signalGroup);
         void AddSignalComment(uint messageId, string signalName, string comment);
         void AddSignalValueType(uint messageId, string signalName, DbcValueType valueType);
+        void AddSignalMultiplexRange(uint messageId, string signalName, SignalMultiplexRange multiplexRange);
         void LinkNamedTableToSignal(uint messageId, string signalName, string tableName);
         void LinkTableValuesToSignal(uint messageId, string signalName, IReadOnlyDictionary<int, string> dictValues);
         void LinkTableValuesToEnvironmentVariable(string variableName, IReadOnlyDictionary<int, string> dictValues);

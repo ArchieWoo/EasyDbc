@@ -13,6 +13,7 @@ namespace EasyDbc.Models
         public string Comment { get; }
         public int CycleTime { get; }
         public IReadOnlyList<ImmutableSignal> Signals { get; }
+        public IReadOnlyList<SignalGroup> SignalGroups { get; }
         public IReadOnlyDictionary<string, CustomProperty> CustomProperties { get; }
 
         internal ImmutableMessage(Message message, IReadOnlyList<ImmutableSignal> signals)
@@ -28,6 +29,7 @@ namespace EasyDbc.Models
             Comment = message.Comment;
             CycleTime = cycleTime;
             Signals = signals;
+            SignalGroups = message.SignalGroups;
 
             //TODO: remove explicit cast (CustomProperty in Message class should be Dictionary instead IDictionary)
             CustomProperties = (IReadOnlyDictionary<string, CustomProperty>)message.CustomProperties;
@@ -45,6 +47,7 @@ namespace EasyDbc.Models
         public string Comment;
         
         public List<Signal> Signals = new List<Signal>();
+        public List<SignalGroup> SignalGroups = new List<SignalGroup>();
         public IDictionary<string, CustomProperty> CustomProperties = new Dictionary<string, CustomProperty>();
 
         internal ImmutableMessage CreateMessage()

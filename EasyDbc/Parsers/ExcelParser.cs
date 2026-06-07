@@ -42,6 +42,13 @@ namespace EasyDbc.Parsers
         private DbcProtocolType _protocolType = DbcProtocolType.CAN;
         private int _messageRowStartOffset = 1;
         private int _nodeRowIndex = 0;
+        public bool ParseSignalGroupColumns { get; set; } = true;
+        private static readonly (DictionaryColumnKey Key, string Header)[] OptionalSignalColumns =
+        {
+            (DictionaryColumnKey.Multiplexing, "Multiplexing"),
+            (DictionaryColumnKey.MultiplexRanges, "Multiplex\r\nRanges"),
+            (DictionaryColumnKey.SignalGroups, "Signal\r\nGroups"),
+        };
         public ExcelParser()
         {
             GenDefaultDictionary();
@@ -214,6 +221,10 @@ namespace EasyDbc.Parsers
                 {
                     return result;
                 }
+                if (ParseSignalGroupColumns)
+                {
+                    DetectOptionalSignalColumns();
+                }
                 AddNodeDictionary();
                 //Paser to Dbc file
                 ParseNodesFromTable();
@@ -257,6 +268,10 @@ namespace EasyDbc.Parsers
                 if ((result = createWorkingTable(sheet, out table)) != ExcelParserState.Success)
                 {
                     return result;
+                }
+                if (ParseSignalGroupColumns)
+                {
+                    DetectOptionalSignalColumns();
                 }
                 AddNodeDictionary();
                 //Paser to Dbc file
@@ -302,6 +317,10 @@ namespace EasyDbc.Parsers
                 if ((result = createWorkingTable(sheet, out table)) != ExcelParserState.Success)
                 {
                     return result;
+                }
+                if (ParseSignalGroupColumns)
+                {
+                    DetectOptionalSignalColumns();
                 }
                 AddNodeDictionary();
                 //Paser to Dbc file
@@ -501,6 +520,46 @@ namespace EasyDbc.Parsers
         {
             return _nodeStartIndex;
         }
+
+        private void DetectOptionalSignalColumns()
+        {
+            if (table == null || table_row_count == 0)
+            {
+                return;
+            }
+
+            var nextNodeStartIndex = _nodeStartIndex;
+            foreach (var optionalColumn in OptionalSignalColumns)
+            {
+                if (nextNodeStartIndex >= table_column_count)
+                {
+                    break;
+                }
+
+                var header = table[_nodeRowIndex, nextNodeStartIndex];
+                if (HeadersMatch(header, optionalColumn.Header))
+                {
+                    AddColumn(optionalColumn.Key.ToString(), optionalColumn.Header);
+                    UpdateColumnConfigWithIndex(optionalColumn.Key, nextNodeStartIndex);
+                    nextNodeStartIndex++;
+                }
+            }
+
+            _nodeStartIndex = nextNodeStartIndex;
+        }
+
+        private static bool HeadersMatch(string actualHeader, string expectedHeader)
+        {
+            return string.Equals(NormalizeHeader(actualHeader), NormalizeHeader(expectedHeader), StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string NormalizeHeader(string header)
+        {
+            return string.IsNullOrWhiteSpace(header)
+                ? string.Empty
+                : Regex.Replace(header, @"\s+", string.Empty);
+        }
+
         private void ParseNodesFromTable()
         {
             try
@@ -528,6 +587,7 @@ namespace EasyDbc.Parsers
         {
             bool messageParsingResult = false;
             bool signalParsingResult = false;
+            Message currentMessage = null;
             AddCustomProperty();
             for (int row = _messageRowStartOffset; row < table_row_count; row++)
             {
@@ -550,6 +610,7 @@ namespace EasyDbc.Parsers
                     };
                     if (messageParsingResult)
                     {
+                        currentMessage = message;
                         _dbcBuilder.AddMessage(message);
                         _dbcBuilder.AddMessageCustomProperty(GenMsgSendType, id, messageSendType, false);
                         _dbcBuilder.AddMessageCustomProperty(VFrameFormat, id, parsedFrameFormat, false);
@@ -578,30 +639,133 @@ namespace EasyDbc.Parsers
                     parsing_SignalUnit(table[row, columnMapping[DictionaryColumnKey.Unit.ToString()].ColumnIndex], out string unit);
                     parsing_ValueTableMap(table[row, columnMapping[DictionaryColumnKey.ValueTable.ToString()].ColumnIndex], out IReadOnlyDictionary<int, string> valueTableMap);
                     parsing_SignalReceiver(row, out string[] reveiver);
+                    string multiplexing = string.Empty;
+                    List<SignalMultiplexRange> multiplexRanges = new List<SignalMultiplexRange>();
+                    if (ParseSignalGroupColumns)
+                    {
+                        parsing_Multiplexing(ReadOptionalCell(row, DictionaryColumnKey.Multiplexing), out multiplexing);
+                        parsing_MultiplexRanges(ReadOptionalCell(row, DictionaryColumnKey.MultiplexRanges), out multiplexRanges);
+                    }
                     if (signalParsingResult)
                     {
-                        _dbcBuilder.AddSignal(
-                            new Signal()
-                            {
-                                Name = name,
-                                Comment = comment,
-                                ByteOrder = byteOrder,
-                                StartBit = startBit,
-                                Length = length,
-                                ValueType = valueType,
-                                Factor = factor,
-                                Offset = offset,
-                                Minimum = minimumPhysical,
-                                Maximum = maximumPhysical,
-                                Unit = unit,
-                                ValueTableMap = valueTableMap,
-                                Receiver = reveiver,
-                            });
+                        var signal = new Signal()
+                        {
+                            Name = name,
+                            Comment = comment,
+                            ByteOrder = byteOrder,
+                            StartBit = startBit,
+                            Length = length,
+                            ValueType = valueType,
+                            Factor = factor,
+                            Offset = offset,
+                            Minimum = minimumPhysical,
+                            Maximum = maximumPhysical,
+                            Unit = unit,
+                            ValueTableMap = valueTableMap,
+                            Receiver = reveiver,
+                            Multiplexing = multiplexing,
+                            MultiplexRanges = multiplexRanges,
+                        };
+                        _dbcBuilder.AddSignal(signal);
+                        if (ParseSignalGroupColumns)
+                        {
+                            AddSignalToGroups(currentMessage, name, ReadOptionalCell(row, DictionaryColumnKey.SignalGroups));
+                        }
                     }
 
                 }
             }
             return;
+        }
+
+        private string ReadOptionalCell(int row, DictionaryColumnKey columnKey)
+        {
+            if (columnMapping.TryGetValue(columnKey.ToString(), out ExcelColumnConfigModel column) == false)
+            {
+                return string.Empty;
+            }
+
+            if (row < 0 || row >= table_row_count || column.ColumnIndex < 0 || column.ColumnIndex >= table_column_count)
+            {
+                return string.Empty;
+            }
+
+            return table[row, column.ColumnIndex] ?? string.Empty;
+        }
+
+        private static bool parsing_Multiplexing(string originalString, out string multiplexing)
+        {
+            multiplexing = string.IsNullOrWhiteSpace(originalString) ? string.Empty : originalString.Trim();
+            return !string.IsNullOrWhiteSpace(multiplexing);
+        }
+
+        private static bool parsing_MultiplexRanges(string originalString, out List<SignalMultiplexRange> multiplexRanges)
+        {
+            multiplexRanges = new List<SignalMultiplexRange>();
+            if (string.IsNullOrWhiteSpace(originalString))
+            {
+                return false;
+            }
+
+            var entries = originalString.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var entry in entries)
+            {
+                var parts = entry.Split(new[] { ':' }, 2);
+                if (parts.Length != 2)
+                {
+                    continue;
+                }
+
+                var ranges = new List<MultiplexRange>();
+                foreach (var rangeText in parts[1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var bounds = rangeText.Trim().Split(new[] { '-' }, 2);
+                    if (bounds.Length == 2 &&
+                        int.TryParse(bounds[0].Trim(), out var from) &&
+                        int.TryParse(bounds[1].Trim(), out var to))
+                    {
+                        ranges.Add(new MultiplexRange(from, to));
+                    }
+                }
+
+                if (ranges.Count > 0)
+                {
+                    multiplexRanges.Add(new SignalMultiplexRange(parts[0].Trim(), ranges));
+                }
+            }
+
+            return multiplexRanges.Count > 0;
+        }
+
+        private static void AddSignalToGroups(Message message, string signalName, string groupText)
+        {
+            if (message == null || string.IsNullOrWhiteSpace(signalName) || string.IsNullOrWhiteSpace(groupText))
+            {
+                return;
+            }
+
+            var groups = groupText.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var group in groups)
+            {
+                var groupName = group.Trim();
+                var repetitions = 1;
+                var match = Regex.Match(groupName, @"^(?<Name>[\w]+)\((?<Repetitions>\d+)\)$");
+                if (match.Success)
+                {
+                    groupName = match.Groups["Name"].Value;
+                    int.TryParse(match.Groups["Repetitions"].Value, out repetitions);
+                }
+
+                var existingGroup = message.SignalGroups.FirstOrDefault(item => item.Name == groupName);
+                if (existingGroup == null)
+                {
+                    message.SignalGroups.Add(new SignalGroup(groupName, repetitions, new[] { signalName }));
+                }
+                else if (existingGroup.SignalNames.Contains(signalName) == false)
+                {
+                    existingGroup.SignalNames = existingGroup.SignalNames.Concat(new[] { signalName }).ToArray();
+                }
+            }
         }
         private bool parsing_ValueTableMap(string valueTableString, out IReadOnlyDictionary<int, string> valueTableMap)
         {

@@ -71,6 +71,26 @@ namespace EasyDbc.Generators
                 m_observer.NoMessageFound();
         }
 
+        public void AddSignalGroup(uint messageId, SignalGroup signalGroup)
+        {
+            if (m_messages.TryGetValue(messageId, out var message))
+            {
+                message.SignalGroups.Add(signalGroup);
+            }
+            else
+                m_observer.MessageIdNotFound(messageId);
+        }
+
+        public void AddSignalMultiplexRange(uint messageId, string signalName, SignalMultiplexRange multiplexRange)
+        {
+            if (TryGetValueMessageSignal(messageId, signalName, out var signal))
+            {
+                signal.MultiplexRanges.Add(multiplexRange);
+            }
+            else
+                m_observer.SignalNameNotFound(messageId, signalName);
+        }
+
         public void AddCustomProperty(CustomPropertyObjectType objectType, CustomPropertyDefinition customProperty)
         {
             if(m_customProperties[objectType].TryGetValue(customProperty.Name, out _))

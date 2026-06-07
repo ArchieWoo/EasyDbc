@@ -109,12 +109,14 @@ namespace EasyDbc.Generators
             WriteBitTiming(dbc, writer);
             WriteNodes(dbc, writer);
             WriteMessages(dbc, writer);
+            WriteSignalGroups(dbc, writer);
             //WriteEnvironmentVariables(dbc, writer);
             WriteMessageComments(dbc, writer);
             WriteCustomProperties(dbc, writer);
             WriteCustomPropertyDefaultValues(dbc, writer);
             WriteCustomPropertyValues(dbc, writer);
             WriteValueTables(dbc, writer);
+            WriteSignalMultiplexValues(dbc, writer);
         }
 
         private static void WriteCustomProperties(Dbc dbc, TextWriter writer)
@@ -432,6 +434,31 @@ namespace EasyDbc.Generators
             }
             writer.WriteLine("");
         }
+
+        private static void WriteSignalGroups(Dbc dbc, TextWriter writer)
+        {
+            var hasSignalGroups = false;
+            foreach (var message in dbc.Messages)
+            {
+                uint messageId = message.IsExtID ? message.ID | 0x80000000 : message.ID;
+                foreach (var signalGroup in message.SignalGroups)
+                {
+                    if (string.IsNullOrWhiteSpace(signalGroup.Name))
+                    {
+                        continue;
+                    }
+
+                    hasSignalGroups = true;
+                    var signalNames = signalGroup.SignalNames == null ? string.Empty : string.Join(" ", signalGroup.SignalNames.Where(name => !string.IsNullOrWhiteSpace(name)));
+                    writer.WriteLine($"SIG_GROUP_ {messageId} {signalGroup.Name} {signalGroup.Repetitions} : {signalNames};");
+                }
+            }
+
+            if (hasSignalGroups)
+            {
+                writer.WriteLine("");
+            }
+        }
         private static void WriteMessageComments(Dbc dbc, TextWriter writer)
         {
             foreach (var message in dbc.Messages)
@@ -532,6 +559,27 @@ namespace EasyDbc.Generators
                             writer.Write($"{kvp.Key} \"{kvp.Value}\" ");
                         }
                         writer.WriteLine(";");
+                    }
+                }
+            }
+        }
+
+        private static void WriteSignalMultiplexValues(Dbc dbc, TextWriter writer)
+        {
+            foreach (var message in dbc.Messages)
+            {
+                uint messageId = message.IsExtID ? message.ID | 0x80000000 : message.ID;
+                foreach (var signal in message.Signals)
+                {
+                    foreach (var multiplexRange in signal.MultiplexRanges)
+                    {
+                        if (string.IsNullOrWhiteSpace(multiplexRange.MultiplexorSignalName) || multiplexRange.Ranges == null || multiplexRange.Ranges.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        var ranges = string.Join(", ", multiplexRange.Ranges.Select(range => $"{range.From}-{range.To}"));
+                        writer.WriteLine($"SG_MUL_VAL_ {messageId} {signal.Name} {multiplexRange.MultiplexorSignalName} {ranges};");
                     }
                 }
             }

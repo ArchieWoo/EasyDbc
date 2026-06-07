@@ -24,6 +24,7 @@ namespace EasyDbc.Demo.ViewModels;
 public class MainViewModel : ObservableObject
 {
     private const int MaxNameLength = 32;
+    private const int MaxRecentPaths = 10;
     public MainViewModel()
     {
         LoadSettings();
@@ -118,6 +119,41 @@ public class MainViewModel : ObservableObject
             }
         }
     }
+
+    public ObservableCollection<string> RecentInputFiles { get; } = new();
+
+    public ObservableCollection<string> RecentDbcOutputFiles { get; } = new();
+
+    public ObservableCollection<string> RecentExcelOutputFiles { get; } = new();
+
+    private bool _isBusy;
+    public bool IsBusy
+    {
+        get => _isBusy;
+        set
+        {
+            if (SetProperty(ref _isBusy, value))
+            {
+                _parsingMessageCommand?.NotifyCanExecuteChanged();
+                _generateFileCommand?.NotifyCanExecuteChanged();
+            }
+        }
+    }
+
+    private bool _includeSignalGroupExcelColumns = true;
+    public bool IncludeSignalGroupExcelColumns
+    {
+        get => _includeSignalGroupExcelColumns;
+        set
+        {
+            if (SetProperty(ref _includeSignalGroupExcelColumns, value))
+            {
+                SaveSettings();
+            }
+        }
+    }
+
+
     private string _nodes = string.Empty;
     public string Nodes
     {
@@ -257,6 +293,7 @@ public class MainViewModel : ObservableObject
                 {
                     FilePath3 = openFileDialog.FileName;
                 }
+                AddRecentPath(RecentInputFiles, openFileDialog.FileName);
                 _settings.LastOpenDirectory = Path.GetDirectoryName(openFileDialog.FileName);
                 SaveSettings();
             }
@@ -325,10 +362,12 @@ public class MainViewModel : ObservableObject
             if (extension == ".dbc" && obj == "OutputDbcFilePath")
             {
                 OutputDbcFilePath = saveFileDialog.FileName;
+                AddRecentPath(RecentDbcOutputFiles, saveFileDialog.FileName);
             }
             else if ((extension == ".xls" || extension == ".xlsx") && obj == "OutputExcelFilePath")
             {
                 OutputExcelFilePath = saveFileDialog.FileName;
+                AddRecentPath(RecentExcelOutputFiles, saveFileDialog.FileName);
             }
             else
             {
@@ -339,12 +378,12 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    private ICommand _generateFileCommand;
-    public ICommand GenerateFileCommand => _generateFileCommand ??= new RelayCommand<string>(OnGenerateFileCommand);
+    private AsyncRelayCommand<string> _generateFileCommand;
+    public ICommand GenerateFileCommand => _generateFileCommand ??= new AsyncRelayCommand<string>(OnGenerateFileCommandAsync, CanRunLongOperation);
 
-    private void OnGenerateFileCommand(string obj)
+    private async Task OnGenerateFileCommandAsync(string obj)
     {
-        if (_mergedDbc == null && !ParsingAndMergeDbc())
+        if (_mergedDbc == null && !await ParsingAndMergeDbcAsync())
         {
             MessageBox.Show("The DBC parsing result is empty. Please confirm if the file is correct. ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
@@ -354,7 +393,15 @@ public class MainViewModel : ObservableObject
         {
             if (obj == "dbc")
             {
-                DbcGenerator.WriteToFile(_mergedDbc, OutputDbcFilePath);
+                try
+                {
+                    IsBusy = true;
+                    await Task.Run(() => DbcGenerator.WriteToFile(_mergedDbc, OutputDbcFilePath));
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
                 if (File.Exists(OutputDbcFilePath))
                 {
                     MessageBoxResult result = MessageBox.Show("Do you need to navigate to the file generation path?", "File generated successfully", MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -366,22 +413,34 @@ public class MainViewModel : ObservableObject
             }
             else if (obj == "excel")
             {
-                ExcelGenerator excelGenerator = new ExcelGenerator();
-                WriteStatus status = excelGenerator.WriteToFile(_mergedDbc, OutputExcelFilePath, "CanMatrixSheet");
+                WriteStatus status;
+                try
+                {
+                    IsBusy = true;
+                    status = await Task.Run(() =>
+                    {
+                        ExcelGenerator excelGenerator = new ExcelGenerator { IncludeSignalGroupColumns = IncludeSignalGroupExcelColumns };
+                        return excelGenerator.WriteToFile(_mergedDbc, OutputExcelFilePath, "CanMatrixSheet");
+                    });
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
                 if (status == WriteStatus.Success)
                 {
                     MessageBoxResult result = MessageBox.Show("Do you need to navigate to the file generation path?", "File generated successfully", MessageBoxButton.YesNo, MessageBoxImage.Information);
                     if (result == MessageBoxResult.Yes)
                     {
-                        Process.Start("explorer.exe", Path.GetDirectoryName(OutputDbcFilePath));
+                        Process.Start("explorer.exe", Path.GetDirectoryName(OutputExcelFilePath));
                     }
                 }
 
             }
         }
     }
-    private ICommand _parsingMessageCommand;
-    public ICommand ParsingMessageCommand => _parsingMessageCommand ??= new RelayCommand(OnParsingMessagesCommand);
+    private AsyncRelayCommand _parsingMessageCommand;
+    public ICommand ParsingMessageCommand => _parsingMessageCommand ??= new AsyncRelayCommand(OnParsingMessagesCommandAsync, CanRunLongOperation);
 
     private ICommand _toggleMessageSortDirectionCommand;
     public ICommand ToggleMessageSortDirectionCommand => _toggleMessageSortDirectionCommand ??= new RelayCommand(OnToggleMessageSortDirectionCommand);
@@ -389,9 +448,19 @@ public class MainViewModel : ObservableObject
     private ICommand _toggleExpandAllMessagesCommand;
     public ICommand ToggleExpandAllMessagesCommand => _toggleExpandAllMessagesCommand ??= new RelayCommand(OnToggleExpandAllMessagesCommand);
 
-    private void OnParsingMessagesCommand()
+    private async Task OnParsingMessagesCommandAsync()
     {
-        ParsingAndMergeDbc();
+        await ParsingAndMergeDbcAsync();
+    }
+
+    private bool CanRunLongOperation()
+    {
+        return !IsBusy;
+    }
+
+    private bool CanRunLongOperation(string _)
+    {
+        return !IsBusy;
     }
 
     private void OnToggleMessageSortDirectionCommand()
@@ -419,12 +488,44 @@ public class MainViewModel : ObservableObject
 
         return extension == ".xls" || extension == ".xlsx" || extension == ".dbc";
     }
-    private bool ParsingAndMergeDbc()
+    private async Task<bool> ParsingAndMergeDbcAsync()
     {
-        Nodes = string.Empty;
-        Messages.Clear();
-        MessageItems.Clear();
-        _mergedDbc = null;
+        IsBusy = true;
+        try
+        {
+            var result = await Task.Run(BuildParseDisplayResult);
+            Nodes = string.Empty;
+            Messages.Clear();
+            MessageItems.Clear();
+            _mergedDbc = null;
+
+            if (result == null || result.MergedDbc == null)
+            {
+                return false;
+            }
+
+            _mergedDbc = result.MergedDbc;
+            Nodes = result.Nodes;
+            Messages = result.Messages;
+            MessageItems = result.MessageItems;
+            AreAllMessagesExpanded = false;
+            foreach (var messageItem in MessageItems)
+            {
+                messageItem.IsExpanded = false;
+            }
+            _deletedMessages.Clear();
+            _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
+            UpdateMessageHighlighting();
+            return true;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private ParseDisplayResult BuildParseDisplayResult()
+    {
         List<Dbc> parsingResult = new List<Dbc>();
         if (!string.IsNullOrEmpty(FilePath1))
         {
@@ -447,17 +548,18 @@ public class MainViewModel : ObservableObject
                 parsingResult.Add(dbc);
             }
         }
-        bool result = DbcGenerator.MergeDbc(parsingResult, out _mergedDbc);
+        bool result = DbcGenerator.MergeDbc(parsingResult, out var mergedDbc);
         if (result)
         {
-            foreach (Node node in _mergedDbc.Nodes)
+            return new ParseDisplayResult
             {
-                Nodes = string.Join("; ", _mergedDbc.Nodes.Select(node => node.Name));
-            }
-            GenerateDataTable(_mergedDbc);
-            GenerateEditableMessages(_mergedDbc);
+                MergedDbc = mergedDbc,
+                Nodes = string.Join("; ", mergedDbc.Nodes.Select(node => node.Name)),
+                Messages = BuildMessagesDataTable(mergedDbc),
+                MessageItems = BuildEditableMessageItems(mergedDbc),
+            };
         }
-        return result;
+        return null;
     }
     private bool TryParsingToFile(string path, out Dbc dbc)
     {
@@ -474,6 +576,7 @@ public class MainViewModel : ObservableObject
         else if (extension == ".xls" || extension == ".xlsx")
         {
             ExcelParser excelParser = new ExcelParser();
+            excelParser.ParseSignalGroupColumns = IncludeSignalGroupExcelColumns;
             ExcelParserState result = excelParser.ParseFirstSheetFromPath(path, out Dbc dbcOutput);
             if (result == ExcelParserState.Success)
             {
@@ -484,35 +587,39 @@ public class MainViewModel : ObservableObject
         dbc = null;
         return false;
     }
-    private void GenerateDataTable(Dbc dbc)
+    private static DataTable BuildMessagesDataTable(Dbc dbc)
     {
-        _messages.Clear();
-        _messages.Columns.Clear();
-        _messages.Columns.Add("ID");
-        _messages.Columns.Add("Message Name");
-        _messages.Columns.Add("DLC");
-        _messages.Columns.Add("Transmitter");
-        _messages.Columns.Add("CycleTime");
-        _messages.Columns.Add("Signal Name");
-        _messages.Columns.Add("Start Bit");
-        _messages.Columns.Add("Length");
-        _messages.Columns.Add("Byte Order");
-        _messages.Columns.Add("Data Type");
-        _messages.Columns.Add("Factor");
-        _messages.Columns.Add("Offset");
-        _messages.Columns.Add("Minimum");
-        _messages.Columns.Add("Maximum");
-        _messages.Columns.Add("Initial Value");
-        _messages.Columns.Add("Unit");
-        _messages.Columns.Add("ValueTable");
-        _messages.Columns.Add("Comment");
+        var messages = new DataTable();
+        messages.Columns.Add("ID");
+        messages.Columns.Add("Message Name");
+        messages.Columns.Add("DLC");
+        messages.Columns.Add("Transmitter");
+        messages.Columns.Add("CycleTime");
+        messages.Columns.Add("Signal Name");
+        messages.Columns.Add("Start Bit");
+        messages.Columns.Add("Length");
+        messages.Columns.Add("Byte Order");
+        messages.Columns.Add("Data Type");
+        messages.Columns.Add("Factor");
+        messages.Columns.Add("Offset");
+        messages.Columns.Add("Minimum");
+        messages.Columns.Add("Maximum");
+        messages.Columns.Add("Initial Value");
+        messages.Columns.Add("Unit");
+        messages.Columns.Add("ValueTable");
+        messages.Columns.Add("Multiplexing");
+        messages.Columns.Add("MultiplexRanges");
+        messages.Columns.Add("SignalGroups");
+        messages.Columns.Add("Comment");
         foreach (Message message in dbc.Messages)
         {
             foreach (Signal signal in message.Signals)
             {
                 signal.Parent.CycleTime(out var cycleTime);
                 var valueTableString = string.Join("\n", signal.ValueTableMap);
-                _messages.Rows.Add($"0x{signal.Parent.ID.ToString("X")}",
+                var multiplexRangesString = FormatMultiplexRanges(signal.MultiplexRanges);
+                var signalGroupsString = FormatSignalGroups(signal);
+                messages.Rows.Add($"0x{signal.Parent.ID.ToString("X")}",
                     signal.Parent.Name,
                     signal.Parent.DLC,
                     signal.Parent.Transmitter,
@@ -529,16 +636,19 @@ public class MainViewModel : ObservableObject
                     signal.InitialValue,
                     signal.Unit,
                     valueTableString,
+                    signal.Multiplexing,
+                    multiplexRangesString,
+                    signalGroupsString,
                     signal.Comment
                     );
             }
         }
-        Messages = _messages;
+        return messages;
     }
 
     private void GenerateEditableMessages(Dbc dbc)
     {
-        MessageItems = new ObservableCollection<EditableMessageViewModel>(dbc.Messages.Select(message => new EditableMessageViewModel(message)));
+        MessageItems = BuildEditableMessageItems(dbc);
         AreAllMessagesExpanded = false;
         foreach (var messageItem in MessageItems)
         {
@@ -547,6 +657,11 @@ public class MainViewModel : ObservableObject
         _deletedMessages.Clear();
         _undoDeleteMessageCommand?.NotifyCanExecuteChanged();
         UpdateMessageHighlighting();
+    }
+
+    private static ObservableCollection<EditableMessageViewModel> BuildEditableMessageItems(Dbc dbc)
+    {
+        return new ObservableCollection<EditableMessageViewModel>(dbc.Messages.Select(message => new EditableMessageViewModel(message)));
     }
 
     private void ApplyMessageSorting()
@@ -783,6 +898,14 @@ public class MainViewModel : ObservableObject
         public int ViewIndex { get; }
         public int ModelIndex { get; }
         public List<Signal> DetachedSignals { get; }
+    }
+
+    private sealed class ParseDisplayResult
+    {
+        public Dbc MergedDbc { get; set; }
+        public string Nodes { get; set; }
+        public DataTable Messages { get; set; }
+        public ObservableCollection<EditableMessageViewModel> MessageItems { get; set; }
     }
 
     public class EditableMessageViewModel : ObservableObject
@@ -1228,6 +1351,39 @@ public class MainViewModel : ObservableObject
             set => SetProperty(ref _valueTable, value);
         }
 
+        public string Multiplexing
+        {
+            get => _signal.Multiplexing;
+            set
+            {
+                if (_signal.Multiplexing != value)
+                {
+                    _signal.Multiplexing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string MultiplexRanges
+        {
+            get => FormatMultiplexRanges(_signal.MultiplexRanges);
+            set
+            {
+                _signal.MultiplexRanges = ParseMultiplexRanges(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public string SignalGroups
+        {
+            get => FormatSignalGroups(_signal);
+            set
+            {
+                UpdateSignalGroups(_parentMessage.SourceMessage, _signal.Name, value);
+                OnPropertyChanged();
+            }
+        }
+
         public string Comment
         {
             get => _signal.Comment;
@@ -1238,6 +1394,111 @@ public class MainViewModel : ObservableObject
                     _signal.Comment = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+    }
+
+    private static string FormatMultiplexRanges(IEnumerable<SignalMultiplexRange> multiplexRanges)
+    {
+        if (multiplexRanges == null)
+        {
+            return string.Empty;
+        }
+
+        return string.Join("; ", multiplexRanges
+            .Where(range => !string.IsNullOrWhiteSpace(range.MultiplexorSignalName) && range.Ranges != null && range.Ranges.Count > 0)
+            .Select(range => $"{range.MultiplexorSignalName}:{string.Join(",", range.Ranges.Select(item => $"{item.From}-{item.To}"))}"));
+    }
+
+    private static List<SignalMultiplexRange> ParseMultiplexRanges(string text)
+    {
+        var multiplexRanges = new List<SignalMultiplexRange>();
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return multiplexRanges;
+        }
+
+        var entries = text.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var entry in entries)
+        {
+            var parts = entry.Split(new[] { ':' }, 2);
+            if (parts.Length != 2)
+            {
+                continue;
+            }
+
+            var ranges = new List<MultiplexRange>();
+            foreach (var rangeText in parts[1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var bounds = rangeText.Trim().Split(new[] { '-' }, 2);
+                if (bounds.Length == 2 &&
+                    int.TryParse(bounds[0].Trim(), out var from) &&
+                    int.TryParse(bounds[1].Trim(), out var to))
+                {
+                    ranges.Add(new MultiplexRange(from, to));
+                }
+            }
+
+            if (ranges.Count > 0)
+            {
+                multiplexRanges.Add(new SignalMultiplexRange(parts[0].Trim(), ranges));
+            }
+        }
+
+        return multiplexRanges;
+    }
+
+    private static string FormatSignalGroups(Signal signal)
+    {
+        if (signal.Parent?.SignalGroups == null)
+        {
+            return string.Empty;
+        }
+
+        return string.Join("; ", signal.Parent.SignalGroups
+            .Where(group => group.SignalNames != null && group.SignalNames.Contains(signal.Name))
+            .Select(group => group.Repetitions == 1 ? group.Name : $"{group.Name}({group.Repetitions})"));
+    }
+
+    private static void UpdateSignalGroups(Message message, string signalName, string groupText)
+    {
+        if (message == null || string.IsNullOrWhiteSpace(signalName))
+        {
+            return;
+        }
+
+        foreach (var group in message.SignalGroups)
+        {
+            group.SignalNames = group.SignalNames.Where(name => name != signalName).ToArray();
+        }
+
+        message.SignalGroups.RemoveAll(group => group.SignalNames.Length == 0);
+
+        if (string.IsNullOrWhiteSpace(groupText))
+        {
+            return;
+        }
+
+        var groups = groupText.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var group in groups)
+        {
+            var groupName = group.Trim();
+            var repetitions = 1;
+            var match = System.Text.RegularExpressions.Regex.Match(groupName, @"^(?<Name>[\w]+)\((?<Repetitions>\d+)\)$");
+            if (match.Success)
+            {
+                groupName = match.Groups["Name"].Value;
+                int.TryParse(match.Groups["Repetitions"].Value, out repetitions);
+            }
+
+            var existingGroup = message.SignalGroups.FirstOrDefault(item => item.Name == groupName);
+            if (existingGroup == null)
+            {
+                message.SignalGroups.Add(new SignalGroup(groupName, repetitions, new[] { signalName }));
+            }
+            else if (existingGroup.SignalNames.Contains(signalName) == false)
+            {
+                existingGroup.SignalNames = existingGroup.SignalNames.Concat(new[] { signalName }).ToArray();
             }
         }
     }
@@ -1267,6 +1528,15 @@ public class MainViewModel : ObservableObject
             FilePath3 = loaded.FilePath3;
             OutputDbcFilePath = loaded.OutputDbcFilePath;
             OutputExcelFilePath = loaded.OutputExcelFilePath;
+            IncludeSignalGroupExcelColumns = loaded.IncludeSignalGroupExcelColumns;
+            SetRecentPaths(RecentInputFiles, loaded.RecentInputFiles);
+            SetRecentPaths(RecentDbcOutputFiles, loaded.RecentDbcOutputFiles);
+            SetRecentPaths(RecentExcelOutputFiles, loaded.RecentExcelOutputFiles);
+            AddRecentPath(RecentInputFiles, FilePath1, false);
+            AddRecentPath(RecentInputFiles, FilePath2, false);
+            AddRecentPath(RecentInputFiles, FilePath3, false);
+            AddRecentPath(RecentDbcOutputFiles, OutputDbcFilePath, false);
+            AddRecentPath(RecentExcelOutputFiles, OutputExcelFilePath, false);
         }
         catch
         {
@@ -1290,6 +1560,10 @@ public class MainViewModel : ObservableObject
         _settings.FilePath3 = FilePath3;
         _settings.OutputDbcFilePath = OutputDbcFilePath;
         _settings.OutputExcelFilePath = OutputExcelFilePath;
+        _settings.IncludeSignalGroupExcelColumns = IncludeSignalGroupExcelColumns;
+        _settings.RecentInputFiles = RecentInputFiles.ToArray();
+        _settings.RecentDbcOutputFiles = RecentDbcOutputFiles.ToArray();
+        _settings.RecentExcelOutputFiles = RecentExcelOutputFiles.ToArray();
 
         var settingsPath = GetSettingsPath();
         try
@@ -1339,6 +1613,45 @@ public class MainViewModel : ObservableObject
         return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
     }
 
+    private void AddRecentPath(ObservableCollection<string> collection, string path, bool saveSettings = true)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        var existing = collection.FirstOrDefault(item => string.Equals(item, path, StringComparison.OrdinalIgnoreCase));
+        if (existing != null)
+        {
+            collection.Remove(existing);
+        }
+
+        collection.Insert(0, path);
+        while (collection.Count > MaxRecentPaths)
+        {
+            collection.RemoveAt(collection.Count - 1);
+        }
+
+        if (saveSettings)
+        {
+            SaveSettings();
+        }
+    }
+
+    private static void SetRecentPaths(ObservableCollection<string> collection, IEnumerable<string> paths)
+    {
+        collection.Clear();
+        if (paths == null)
+        {
+            return;
+        }
+
+        foreach (var path in paths.Where(path => !string.IsNullOrWhiteSpace(path)).Distinct(StringComparer.OrdinalIgnoreCase).Take(MaxRecentPaths))
+        {
+            collection.Add(path);
+        }
+    }
+
     private string GetInitialSaveDirectory(string target)
     {
         var candidate = target?.ToLowerInvariant() switch
@@ -1379,5 +1692,9 @@ public class MainViewModel : ObservableObject
         public string OutputExcelFilePath { get; set; }
         public string LastOpenDirectory { get; set; }
         public string LastSaveDirectory { get; set; }
+        public bool IncludeSignalGroupExcelColumns { get; set; } = true;
+        public string[] RecentInputFiles { get; set; }
+        public string[] RecentDbcOutputFiles { get; set; }
+        public string[] RecentExcelOutputFiles { get; set; }
     }
 }

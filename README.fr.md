@@ -13,6 +13,12 @@
 [![](https://img.shields.io/nuget/vpre/EasyDbc?color=%23004880&label=NuGet&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
 [![GitHub](https://img.shields.io/github/license/Vico-wu/EasyDbc?color=%231281c0)](LICENSE)
 
+## SignalGroup Et Multiplexing
+
+- Prend en charge l’analyse et la génération des entrées DBC `SIG_GROUP_` et `SG_MUL_VAL_`.
+- L’import/export Excel prend en charge les colonnes optionnelles `Multiplexing`, `Multiplex Ranges` et `Signal Groups`; les anciens formats Excel restent compatibles lorsque ces colonnes sont absentes.
+- Le projet demo permet d’activer ou de désactiver l’analyse et la génération des colonnes Excel SignalGroup/Multiplexing.
+
 ## Introduction  
 Brève présentation des fonctionnalités et des objectifs du projet.  
 Ce projet est développé sur la base de [`DbcParserLib`](https://github.com/EFeru/DbcParser), avec les fonctionnalités étendues suivantes :

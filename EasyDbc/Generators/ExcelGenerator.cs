@@ -35,6 +35,20 @@ namespace EasyDbc.Generators
         private int table_column_count = 0;
         private IDictionary<string, ExcelColumnConfigModel> columnMapping = new Dictionary<string, ExcelColumnConfigModel>();
 
+        private bool _includeSignalGroupColumns = true;
+        public bool IncludeSignalGroupColumns
+        {
+            get => _includeSignalGroupColumns;
+            set
+            {
+                if (_includeSignalGroupColumns != value)
+                {
+                    _includeSignalGroupColumns = value;
+                    GenDefaultDictionary();
+                }
+            }
+        }
+
 
         public void GenDefaultDictionary()
         {
@@ -58,6 +72,12 @@ namespace EasyDbc.Generators
             AddColumn(nameof(DictionaryColumnKey.InitialValue), "Default\r\nValue", 15);
             AddColumn(nameof(DictionaryColumnKey.Unit), "Unit", 10);
             AddColumn(nameof(DictionaryColumnKey.ValueTable), "Value\r\nTable", 25);
+            if (_includeSignalGroupColumns)
+            {
+                AddColumn(nameof(DictionaryColumnKey.Multiplexing), "Multiplexing", 12);
+                AddColumn(nameof(DictionaryColumnKey.MultiplexRanges), "Multiplex\r\nRanges", 24);
+                AddColumn(nameof(DictionaryColumnKey.SignalGroups), "Signal\r\nGroups", 24);
+            }
         }
         public UpdateColumnConfigState UpdateColumnConfig(string columnKey, bool? isVisible = null, int? columnIndex = null, string header = null, double columnWidth = 0)
         {
@@ -746,6 +766,21 @@ namespace EasyDbc.Generators
                 string formattedValueTable = string.Join("\r\n", signal.ValueTableMap.Select(x => $"0x{x.Key:X}:{x.Value}"));
                 table[currentLine, ValueTableValue.ColumnIndex] = formattedValueTable;
             }
+            //Multiplexing
+            if (columnMapping.TryGetValue(DictionaryColumnKey.Multiplexing.ToString(), out ExcelColumnConfigModel MultiplexingValue))
+            {
+                table[currentLine, MultiplexingValue.ColumnIndex] = signal.Multiplexing ?? string.Empty;
+            }
+            //MultiplexRanges
+            if (columnMapping.TryGetValue(DictionaryColumnKey.MultiplexRanges.ToString(), out ExcelColumnConfigModel MultiplexRangesValue))
+            {
+                table[currentLine, MultiplexRangesValue.ColumnIndex] = FormatMultiplexRanges(signal.MultiplexRanges);
+            }
+            //SignalGroups
+            if (columnMapping.TryGetValue(DictionaryColumnKey.SignalGroups.ToString(), out ExcelColumnConfigModel SignalGroupsValue))
+            {
+                table[currentLine, SignalGroupsValue.ColumnIndex] = FormatSignalGroups(signal);
+            }
             //Node
             foreach (var node in signal.Receiver)
             {
@@ -754,6 +789,30 @@ namespace EasyDbc.Generators
                     table[currentLine, NodeValue.ColumnIndex] = "R";
                 }
             }
+        }
+
+        private static string FormatMultiplexRanges(IEnumerable<SignalMultiplexRange> multiplexRanges)
+        {
+            if (multiplexRanges == null)
+            {
+                return string.Empty;
+            }
+
+            return string.Join("; ", multiplexRanges
+                .Where(range => !string.IsNullOrWhiteSpace(range.MultiplexorSignalName) && range.Ranges != null && range.Ranges.Count > 0)
+                .Select(range => $"{range.MultiplexorSignalName}:{string.Join(",", range.Ranges.Select(item => $"{item.From}-{item.To}"))}"));
+        }
+
+        private static string FormatSignalGroups(Signal signal)
+        {
+            if (signal.Parent?.SignalGroups == null)
+            {
+                return string.Empty;
+            }
+
+            return string.Join("; ", signal.Parent.SignalGroups
+                .Where(group => group.SignalNames != null && group.SignalNames.Contains(signal.Name))
+                .Select(group => group.Repetitions == 1 ? group.Name : $"{group.Name}({group.Repetitions})"));
         }
         private ICellStyle CreateHeaderCellStyle()
         {

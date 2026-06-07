@@ -13,6 +13,12 @@
 [![](https://img.shields.io/nuget/vpre/EasyDbc?color=%23004880&label=NuGet&logo=NuGet)](https://www.nuget.org/packages/EasyDbc/)
 [![GitHub](https://img.shields.io/github/license/Vico-wu/EasyDbc?color=%231281c0)](LICENSE)
 
+## SignalGroup And Multiplexing
+
+- Supports parsing and generating DBC `SIG_GROUP_` and `SG_MUL_VAL_` entries.
+- Excel import/export supports optional `Multiplexing`, `Multiplex Ranges`, and `Signal Groups` columns; older Excel layouts remain compatible when these columns are absent.
+- The demo provides a toggle to enable or disable parsing and generation of SignalGroup/Multiplexing Excel columns.
+
 ## Introduction  
 Brief introduction to the project's features and goals.  
 This project is developed based on [`DbcParserLib`](https://github.com/EFeru/DbcParser) and extends the following functionalities:
